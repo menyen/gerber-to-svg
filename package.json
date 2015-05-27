@@ -52,7 +52,8 @@
   },
   "dependencies": {
     "chalk": "1.0.0",
-    "minimatch": "2.0.8",
+    "lodash.iserror": "3.0.1",
+    "minimatch": "2.0.4",
     "minimist": "^1.1.0"
   }
 }
