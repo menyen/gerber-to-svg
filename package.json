@@ -7,8 +7,12 @@
     "gerber2svg": "bin/gerber2svg"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "lint": "make lint"
   },
+  "precommit": [
+    "lint"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/mcous/gerber-to-svg.git"
@@ -41,6 +45,7 @@
     "jquery": "^2.1.1",
     "mocha": "2.2.5",
     "phantomjs": "^1.9.16",
+    "pre-commit": "1.0.7",
     "uglify-js": "2.4.23",
     "watchify": "3.2.1",
     "zuul": "3.0.0"
