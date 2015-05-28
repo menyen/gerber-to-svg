@@ -13,7 +13,7 @@ exGerb = fs.readFileSync './test/gerber/gerber-spec-example-2.gbr', 'utf-8'
 exDrill = fs.readFileSync './test/drill/example1.drl', 'utf-8'
 warnGerb = fs.readFileSync './test/gerber/repeated-op-code-test.gbr', 'utf-8'
 
-describe 'gerber to svg function', ->
+describe.skip 'gerber to svg function', ->
   it 'should default to the gerber plotter', ->
     expect( -> gerberToSvg exGerb ).to.not.throw()
     expect( -> gerberToSvg exDrill ).to.throw()
