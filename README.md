@@ -36,7 +36,7 @@ switch             | type    | how it rolls
 * `$ gerber2svg path/to/gerber.gbr` will write the SVG to stdout
 * `$ gerber2svg -o some/dir -- path/to/gerber.gbr` will create some/dir/gerber.svg
 * `$ gerber2svg -d **/*.drl -o out -- gerb/*` will process any files in gerb that end in '.drl' as a drill files, everything else as Gerber files, and output to out
-* `$ gerber2svg -o out -j -- gerber.gbr` will output `gerber.json` in directory `out` 
+* `$ gerber2svg -o out -j -- gerber.gbr` will output `gerber.json` in directory `out`
 
 ### api (node and browser)
 
@@ -176,15 +176,23 @@ If your drill file is a wildly different size than your Gerbers, or it's offset 
 ## building from source
 
 1. `$ git clone https://github.com/mcous/gerber-to-svg.git`
-2. `$ npm install && gulp build`
-3. `$ gulp build` or `$ gulp watch` to rebuild or rebuild on source changes
+2. `$ npm install`
+3. `$ make`
 
-Library files for Node live in lib/, standalone library files
-live in dist/, and the command line utility lives in bin/.
+Library files for Node live in `lib`, standalone library files
+live in `dist`, and the command line utility lives in `bin`.
+
+### makefile tasks
+
+* `$ make lint` - checks the code for style errors
+* `$ make watch` - watch the source files and rebuild on changes
+* `$ make clean` - deletes `lib` and `dist`
 
 ### unit testing
-This module uses mocha and chai for unit testing. To run the tests once, run
-`$ gulp test`. To run the tests automatically when source or tests change, run `$ gulp testwatch`.
+This module uses Mocha, Chai, and Zuul for unit testing.
 
-There's also a visual test suite. Run `$ gulp testvisual` and point your browser
-to http://localhost.com:4242 to take a look. This will also run the standalone build watcher.
+* `$ make test` - run the tests once
+* `$ make test-watch` - run the tests when tests or source changes
+* `$ make test-phantom` - run the tests in PhantomJS
+* `$ make test-browsers` - run the tests on SauceLabs
+* `$ make test-visual` - run the visual test suite on http://localhost:4242

@@ -16,6 +16,6 @@ unhook = ->
   buf
 
 module.exports = {
-    hook: hook
-    unhook: unhook
-  }
+  hook: hook
+  unhook: unhook
+}

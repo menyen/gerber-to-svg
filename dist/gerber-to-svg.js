@@ -1,152 +1,4 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.gerberToSvg = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-(function (global){
-var DEFAULT_OPTS, DrillParser, DrillReader, GerberParser, GerberReader, Plotter, builder, coordFactor;
-
-builder = require('./obj-to-xml');
-
-Plotter = require('./plotter');
-
-DrillReader = require('./drill-reader');
-
-DrillParser = require('./drill-parser');
-
-GerberReader = require('./gerber-reader');
-
-GerberParser = require('./gerber-parser');
-
-coordFactor = require('./svg-coord').factor;
-
-DEFAULT_OPTS = {
-  drill: false,
-  pretty: false,
-  object: false,
-  warnArr: null,
-  places: null,
-  zero: null,
-  notation: null,
-  units: null
-};
-
-module.exports = function(file, options) {
-  var a, error, height, key, oldWarn, opts, p, parser, parserOpts, plotterOpts, reader, ref, root, val, width, xml, xmlObject;
-  if (options == null) {
-    options = {};
-  }
-  opts = {};
-  for (key in DEFAULT_OPTS) {
-    val = DEFAULT_OPTS[key];
-    opts[key] = val;
-  }
-  for (key in options) {
-    val = options[key];
-    opts[key] = val;
-  }
-  if (typeof file === 'object') {
-    if (file.svg != null) {
-      return builder(file, {
-        pretty: opts.pretty
-      });
-    } else {
-      throw new Error('non SVG object cannot be converted to an SVG string');
-    }
-  }
-  parserOpts = null;
-  if ((opts.places != null) || (opts.zero != null)) {
-    parserOpts = {
-      places: opts.places,
-      zero: opts.zero
-    };
-  }
-  if (opts.drill) {
-    reader = new DrillReader(file);
-    parser = new DrillParser(parserOpts);
-  } else {
-    reader = new GerberReader(file);
-    parser = new GerberParser(parserOpts);
-  }
-  plotterOpts = null;
-  if ((opts.notation != null) || (opts.units != null)) {
-    plotterOpts = {
-      notation: opts.notation,
-      units: opts.units
-    };
-  }
-  p = new Plotter(reader, parser, plotterOpts);
-  oldWarn = null;
-  root = null;
-  if (Array.isArray(opts.warnArr)) {
-    root = typeof window !== "undefined" && window !== null ? window : global;
-    if (root.console == null) {
-      root.console = {};
-    }
-    oldWarn = root.console.warn;
-    root.console.warn = function(chunk) {
-      return opts.warnArr.push(chunk.toString());
-    };
-  }
-  try {
-    xmlObject = p.plot();
-  } catch (_error) {
-    error = _error;
-    throw new Error("Error at line " + p.reader.line + " - " + error.message);
-  } finally {
-    if ((oldWarn != null) && (root != null)) {
-      root.console.warn = oldWarn;
-    }
-  }
-  if (!(p.bbox.xMin >= p.bbox.xMax)) {
-    width = p.bbox.xMax - p.bbox.xMin;
-  } else {
-    p.bbox.xMin = 0;
-    p.bbox.xMax = 0;
-    width = 0;
-  }
-  if (!(p.bbox.yMin >= p.bbox.yMax)) {
-    height = p.bbox.yMax - p.bbox.yMin;
-  } else {
-    p.bbox.yMin = 0;
-    p.bbox.yMax = 0;
-    height = 0;
-  }
-  xml = {
-    svg: {
-      xmlns: 'http://www.w3.org/2000/svg',
-      version: '1.1',
-      'xmlns:xlink': 'http://www.w3.org/1999/xlink',
-      width: "" + (width / coordFactor) + p.units,
-      height: "" + (height / coordFactor) + p.units,
-      viewBox: [p.bbox.xMin, p.bbox.yMin, width, height],
-      _: []
-    }
-  };
-  ref = p.attr;
-  for (a in ref) {
-    val = ref[a];
-    xml.svg[a] = val;
-  }
-  if (p.defs.length) {
-    xml.svg._.push({
-      defs: {
-        _: p.defs
-      }
-    });
-  }
-  if (p.group.g._.length) {
-    xml.svg._.push(p.group);
-  }
-  if (!opts.object) {
-    return builder(xml, {
-      pretty: opts.pretty
-    });
-  } else {
-    return xml;
-  }
-};
-
-
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./drill-parser":3,"./drill-reader":4,"./gerber-parser":5,"./gerber-reader":6,"./obj-to-xml":9,"./plotter":12,"./svg-coord":14}],2:[function(require,module,exports){
 var getSvgCoord;
 
 getSvgCoord = require('./svg-coord').get;
@@ -175,8 +27,7 @@ module.exports = function(coord, format) {
 };
 
 
-
-},{"./svg-coord":14}],3:[function(require,module,exports){
+},{"./svg-coord":13}],2:[function(require,module,exports){
 var ABS_COMMAND, DrillParser, INCH_COMMAND, INC_COMMAND, METRIC_COMMAND, PLACES_BACKUP, Parser, ZERO_BACKUP, getSvgCoord, parseCoord, reCOORD,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -301,8 +152,7 @@ DrillParser = (function(superClass) {
 module.exports = DrillParser;
 
 
-
-},{"./coord-parser":2,"./parser":11,"./svg-coord":14}],4:[function(require,module,exports){
+},{"./coord-parser":1,"./parser":10,"./svg-coord":13}],3:[function(require,module,exports){
 var DrillReader;
 
 DrillReader = (function() {
@@ -326,8 +176,7 @@ DrillReader = (function() {
 module.exports = DrillReader;
 
 
-
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var GerberParser, Parser, getSvgCoord, parseCoord, reCOORD,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -642,8 +491,7 @@ GerberParser = (function(superClass) {
 module.exports = GerberParser;
 
 
-
-},{"./coord-parser":2,"./parser":11,"./svg-coord":14}],6:[function(require,module,exports){
+},{"./coord-parser":1,"./parser":10,"./svg-coord":13}],5:[function(require,module,exports){
 var GerberReader;
 
 GerberReader = (function() {
@@ -703,8 +551,7 @@ GerberReader = (function() {
 module.exports = GerberReader;
 
 
-
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var NUMBER, OPERATOR, TOKEN, isNumber, parse, tokenize;
 
 OPERATOR = /[\+\-\/xX\(\)]/;
@@ -801,8 +648,7 @@ module.exports = {
 };
 
 
-
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var MacroTool, calc, getSvgCoord, shapes, unique;
 
 shapes = require('./pad-shapes');
@@ -1224,8 +1070,7 @@ MacroTool = (function() {
 module.exports = MacroTool;
 
 
-
-},{"./macro-calc":7,"./pad-shapes":10,"./svg-coord":14,"./unique-id":15}],9:[function(require,module,exports){
+},{"./macro-calc":6,"./pad-shapes":9,"./svg-coord":13,"./unique-id":14}],8:[function(require,module,exports){
 var CKEY, DTAB, objToXml, repeat;
 
 repeat = function(pattern, count) {
@@ -1333,8 +1178,7 @@ objToXml = function(obj, op) {
 module.exports = objToXml;
 
 
-
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var circle, lowerLeftRect, moire, outline, polygon, rect, thermal, unique, vector;
 
 unique = require('./unique-id');
@@ -1733,8 +1577,7 @@ module.exports = {
 };
 
 
-
-},{"./unique-id":15}],11:[function(require,module,exports){
+},{"./unique-id":14}],10:[function(require,module,exports){
 var Parser;
 
 Parser = (function() {
@@ -1766,8 +1609,7 @@ Parser = (function() {
 module.exports = Parser;
 
 
-
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 var ASSUMED_UNITS, HALF_PI, Macro, Plotter, THREEHALF_PI, TWO_PI, coordFactor, tool, unique;
 
 unique = require('./unique-id');
@@ -2400,8 +2242,7 @@ Plotter = (function() {
 module.exports = Plotter;
 
 
-
-},{"./macro-tool":8,"./standard-tool":13,"./svg-coord":14,"./unique-id":15}],13:[function(require,module,exports){
+},{"./macro-tool":7,"./standard-tool":12,"./svg-coord":13,"./unique-id":14}],12:[function(require,module,exports){
 var shapes, standardTool, unique;
 
 unique = require('./unique-id');
@@ -2526,8 +2367,7 @@ standardTool = function(tool, p) {
 module.exports = standardTool;
 
 
-
-},{"./pad-shapes":10,"./unique-id":15}],14:[function(require,module,exports){
+},{"./pad-shapes":9,"./unique-id":14}],13:[function(require,module,exports){
 var SVG_COORD_E, getSvgCoord,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -2597,8 +2437,7 @@ module.exports = {
 };
 
 
-
-},{}],15:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var generateUniqueId, id;
 
 id = 1000;
@@ -2610,6 +2449,152 @@ generateUniqueId = function() {
 module.exports = generateUniqueId;
 
 
+},{}],15:[function(require,module,exports){
+(function (global){
+var DEFAULT_OPTS, DrillParser, DrillReader, GerberParser, GerberReader, Plotter, builder, coordFactor;
 
-},{}]},{},[1])(1)
+builder = require('./obj-to-xml');
+
+Plotter = require('./plotter');
+
+DrillReader = require('./drill-reader');
+
+DrillParser = require('./drill-parser');
+
+GerberReader = require('./gerber-reader');
+
+GerberParser = require('./gerber-parser');
+
+coordFactor = require('./svg-coord').factor;
+
+DEFAULT_OPTS = {
+  drill: false,
+  pretty: false,
+  object: false,
+  warnArr: null,
+  places: null,
+  zero: null,
+  notation: null,
+  units: null
+};
+
+module.exports = function(file, options) {
+  var a, error, height, key, oldWarn, opts, p, parser, parserOpts, plotterOpts, reader, ref, root, val, width, xml, xmlObject;
+  if (options == null) {
+    options = {};
+  }
+  opts = {};
+  for (key in DEFAULT_OPTS) {
+    val = DEFAULT_OPTS[key];
+    opts[key] = val;
+  }
+  for (key in options) {
+    val = options[key];
+    opts[key] = val;
+  }
+  if (typeof file === 'object') {
+    if (file.svg != null) {
+      return builder(file, {
+        pretty: opts.pretty
+      });
+    } else {
+      throw new Error('non SVG object cannot be converted to an SVG string');
+    }
+  }
+  parserOpts = null;
+  if ((opts.places != null) || (opts.zero != null)) {
+    parserOpts = {
+      places: opts.places,
+      zero: opts.zero
+    };
+  }
+  if (opts.drill) {
+    reader = new DrillReader(file);
+    parser = new DrillParser(parserOpts);
+  } else {
+    reader = new GerberReader(file);
+    parser = new GerberParser(parserOpts);
+  }
+  plotterOpts = null;
+  if ((opts.notation != null) || (opts.units != null)) {
+    plotterOpts = {
+      notation: opts.notation,
+      units: opts.units
+    };
+  }
+  p = new Plotter(reader, parser, plotterOpts);
+  oldWarn = null;
+  root = null;
+  if (Array.isArray(opts.warnArr)) {
+    root = typeof window !== "undefined" && window !== null ? window : global;
+    if (root.console == null) {
+      root.console = {};
+    }
+    oldWarn = root.console.warn;
+    root.console.warn = function(chunk) {
+      return opts.warnArr.push(chunk.toString());
+    };
+  }
+  try {
+    xmlObject = p.plot();
+  } catch (_error) {
+    error = _error;
+    throw new Error("Error at line " + p.reader.line + " - " + error.message);
+  } finally {
+    if ((oldWarn != null) && (root != null)) {
+      root.console.warn = oldWarn;
+    }
+  }
+  if (!(p.bbox.xMin >= p.bbox.xMax)) {
+    width = p.bbox.xMax - p.bbox.xMin;
+  } else {
+    p.bbox.xMin = 0;
+    p.bbox.xMax = 0;
+    width = 0;
+  }
+  if (!(p.bbox.yMin >= p.bbox.yMax)) {
+    height = p.bbox.yMax - p.bbox.yMin;
+  } else {
+    p.bbox.yMin = 0;
+    p.bbox.yMax = 0;
+    height = 0;
+  }
+  xml = {
+    svg: {
+      xmlns: 'http://www.w3.org/2000/svg',
+      version: '1.1',
+      'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+      width: "" + (width / coordFactor) + p.units,
+      height: "" + (height / coordFactor) + p.units,
+      viewBox: [p.bbox.xMin, p.bbox.yMin, width, height],
+      _: []
+    }
+  };
+  ref = p.attr;
+  for (a in ref) {
+    val = ref[a];
+    xml.svg[a] = val;
+  }
+  if (p.defs.length) {
+    xml.svg._.push({
+      defs: {
+        _: p.defs
+      }
+    });
+  }
+  if (p.group.g._.length) {
+    xml.svg._.push(p.group);
+  }
+  if (!opts.object) {
+    return builder(xml, {
+      pretty: opts.pretty
+    });
+  } else {
+    return xml;
+  }
+};
+
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./drill-parser":2,"./drill-reader":3,"./gerber-parser":4,"./gerber-reader":5,"./obj-to-xml":8,"./plotter":11,"./svg-coord":13}]},{},[15])(15)
 });
