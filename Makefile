@@ -17,14 +17,18 @@ TEST := $(shell find $(TEST_DIR) -name '*_test.coffee')
 UGLIFY_OPTS := --c --drop_console -m
 BR_OPTS := -s $(EXPORT) -t coffeeify --extension=.coffee
 
-all: $(LIB) $(DIST) $(DIST_MIN)
+all: lib dist
+
+lib: $(LIB)
+
+dist: $(DIST) $(DIST_MIN)
 
 lint:
 	coffeelint $(SRC) $(TEST_DIR)/*.coffee
 
 test:
 	mocha -R spec --recursive --compilers coffee:coffee-script/register \
-    --require coffee-coverage/register-istanbul  $(TEST_DIR) \
+    --require coffee-coverage/register-istanbul $(TEST_DIR) \
 	&& istanbul report text-summary lcov
 
 test-visual:
@@ -41,7 +45,7 @@ test-watch:
 
 watch:
 	@mkdir -p $(DIST_DIR)
-	chokidar $(SRC) -c "make $(LIB)" & \
+	chokidar $(SRC) -c "make lib & \
 	chokidar $(DIST) -c "make $(DIST_MIN)" & \
 	watchify $(ENTRY) -v $(BR_OPTS) -o $(DIST)
 
@@ -58,5 +62,4 @@ $(DIST): $(SRC)
 $(DIST_MIN): $(DIST)
 	uglifyjs $< $(UGLIFY_OPTS) > $@
 
-.PHONY: lint \
-	test test-visual test-browsers test-phantom test-watch watch clean
+.PHONY: lint lib dist test test-visual test-browsers test-phantom test-watch watch clean

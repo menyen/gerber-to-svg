@@ -53,7 +53,7 @@
   "dependencies": {
     "chalk": "1.0.0",
     "lodash.iserror": "3.0.1",
-    "minimatch": "2.0.4",
+    "minimatch": "2.0.8",
     "minimist": "^1.1.0"
   }
 }

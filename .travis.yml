@@ -7,7 +7,7 @@ node_js:
 - 'iojs'
 after_success: ./node_modules/.bin/coveralls < ./coverage/lcov.info
 # build lib before deploy
-before_deploy: make
+before_deploy: make lib
 # deploy to npm
 deploy:
   provider: npm
