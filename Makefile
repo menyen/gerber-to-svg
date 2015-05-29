@@ -8,15 +8,14 @@ LIB_DIR := lib
 DIST_DIR := dist
 TEST_DIR := test
 
-MIN_PREAMBLE := "/* copyright 2015 by mike cousins and contributors | shared \
-under the terms of the MIT license | source code available at \
-http://github.com/mcous/gerber-to-svg */"
-
 SRC := $(shell find $(SRC_DIR) -name '*.coffee')
 LIB := $(patsubst $(SRC_DIR)/%.coffee, $(LIB_DIR)/%.js, $(SRC))
 DIST := $(DIST_DIR)/$(NAME).js
 DIST_MIN := $(DIST_DIR)/$(NAME).min.js
 TEST := $(shell find $(TEST_DIR) -name '*_test.coffee')
+
+UGLIFY_OPTS := --c --drop_console -m
+BR_OPTS := -s $(EXPORT) -t coffeeify --extension=.coffee
 
 all: $(LIB) $(DIST) $(DIST_MIN)
 
@@ -41,8 +40,10 @@ test-watch:
 	chokidar $(SRC) $(TEST) -c 'make test'
 
 watch:
-	watchify $(ENTRY) -s $(EXPORT) -o $(DIST) -t coffeeify --extension=.coffee
-	chokidar $(SRC) -c 'make'
+	@mkdir -p $(DIST_DIR)
+	chokidar $(SRC) -c "make $(LIB)" & \
+	chokidar $(DIST) -c "make $(DIST_MIN)" & \
+	watchify $(ENTRY) -v $(BR_OPTS) -o $(DIST)
 
 clean:
 	rm -rf $(LIB_DIR) $(DIST_DIR)
@@ -52,9 +53,10 @@ $(LIB_DIR)/%.js: $(SRC_DIR)/%.coffee
 
 $(DIST): $(SRC)
 	@mkdir -p $(@D)
-	browserify $(ENTRY) -s $(EXPORT) -o $(DIST) -t coffeeify --extension=.coffee
+	browserify $(ENTRY) $(BR_OPTS) > $@
 
 $(DIST_MIN): $(DIST)
-	uglifyjs $< --c --drop_console -m --preamble=$(MIN_PREAMBLE) > $@
+	uglifyjs $< $(UGLIFY_OPTS) > $@
 
-.PHONY: lint test test-visual test-browsers test-phantom test-watch watch clean
+.PHONY: lint \
+	test test-visual test-browsers test-phantom test-watch watch clean
