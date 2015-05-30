@@ -45,7 +45,7 @@ test-watch:
 
 watch:
 	@mkdir -p $(DIST_DIR)
-	chokidar $(SRC) -c "make lib & \
+	chokidar $(SRC) -c "make lib" & \
 	chokidar $(DIST) -c "make $(DIST_MIN)" & \
 	watchify $(ENTRY) -v $(BR_OPTS) -o $(DIST)
 
