@@ -28,7 +28,7 @@ lint:
 
 test:
 	mocha -R spec --recursive --compilers coffee:coffee-script/register \
-    --require coffee-coverage/register-istanbul $(TEST_DIR) \
+    --require coffee-coverage/register-istanbul $(TEST) \
 	&& istanbul report text-summary lcov
 
 test-visual:
