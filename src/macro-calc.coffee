@@ -20,31 +20,30 @@ parse = (arith) ->
 
   # some helper functions
   peek = -> tokens[index]
-  consume = (t) -> if t is peek() then index++
+  consume = (t) -> index++
   # recursive parsing functions
   # highest priority - numbers and parentheses
   parsePrimary = ->
     t = peek()
     consume t
-    if isNumber t then exp = { type: 'n', val: t }
+    if isNumber t
+      exp = { type: 'n', val: t }
     else if t is '('
       exp = parseExpression()
-      if peek() isnt ')' then throw new Error "expected ')'" else consume ')'
+      if peek() isnt ')'
+        throw new Error 'unmatched parentheses while parsing a macro expression'
+      else
+        consume ')'
     else
-      throw new Error "#{t} is unexpected in an arithmetic string"
+      throw new Error "#{arith} is a poorly formatted expression"
     exp
 
   # second highest priority - multiplication and division
   parseMultiplication = ->
     exp = parsePrimary()
     t = peek()
-    while t is 'x' or t is '/' or t is 'X'
+    while t is 'x' or t is '/'
       consume t
-      # allow uppercase X as multiply with warning
-      if t is 'X'
-        console.warn "Warning: uppercase 'X' as multiplication symbol is
-          incorrect; macros should use lowercase 'x' to multiply"
-        t = 'x'
       rhs = parsePrimary()
       exp = { type: t, left: exp, right: rhs }
       t = peek()
