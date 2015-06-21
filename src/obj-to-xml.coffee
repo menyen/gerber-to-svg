@@ -1,15 +1,6 @@
 # dead simple object to xml string parser
 
-# fast string repeat function for convenience
-# from http://stackoverflow.com/a/5450113/3826558
-repeat = (pattern, count) ->
-  result = ''
-  if count is 0 then return ''
-  while count > 1
-    if count & 1 then result += pattern
-    count >>= 1
-    pattern += pattern
-  result + pattern
+repeat = require 'lodash.repeat'
 
 CKEY = '_'
 DTAB = '  '

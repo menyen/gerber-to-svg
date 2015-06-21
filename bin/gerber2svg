@@ -2,7 +2,7 @@
 
 var fs = require('fs');
 var path = require('path');
-var lib = path.join(__dirname, '../lib');
+var command = path.join(__dirname, '../lib/command');
 
 // run the command
-require(lib + '/command')();
+require(command)();
