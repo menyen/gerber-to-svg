@@ -1544,14 +1544,14 @@ var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 },{}],4:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
-  var e, m,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      nBits = -7,
-      i = isLE ? (nBytes - 1) : 0,
-      d = isLE ? -1 : 1,
-      s = buffer[offset + i]
+  var e, m
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var nBits = -7
+  var i = isLE ? (nBytes - 1) : 0
+  var d = isLE ? -1 : 1
+  var s = buffer[offset + i]
 
   i += d
 
@@ -1577,14 +1577,14 @@ exports.read = function (buffer, offset, isLE, mLen, nBytes) {
 }
 
 exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
-  var e, m, c,
-      eLen = nBytes * 8 - mLen - 1,
-      eMax = (1 << eLen) - 1,
-      eBias = eMax >> 1,
-      rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0),
-      i = isLE ? 0 : (nBytes - 1),
-      d = isLE ? 1 : -1,
-      s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
+  var e, m, c
+  var eLen = nBytes * 8 - mLen - 1
+  var eMax = (1 << eLen) - 1
+  var eBias = eMax >> 1
+  var rt = (mLen === 23 ? Math.pow(2, -24) - Math.pow(2, -77) : 0)
+  var i = isLE ? 0 : (nBytes - 1)
+  var d = isLE ? 1 : -1
+  var s = value < 0 || (value === 0 && 1 / value < 0) ? 1 : 0
 
   value = Math.abs(value)
 
@@ -4361,6 +4361,2194 @@ function base64DetectIncompleteChar(buffer) {
 
 },{"buffer":2}],23:[function(require,module,exports){
 /**
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var arrayFilter = require('lodash._arrayfilter'),
+    baseCallback = require('lodash._basecallback'),
+    baseFilter = require('lodash._basefilter'),
+    isArray = require('lodash.isarray');
+
+/**
+ * Iterates over elements of `collection`, returning an array of all elements
+ * `predicate` returns truthy for. The predicate is bound to `thisArg` and
+ * invoked with three arguments: (value, index|key, collection).
+ *
+ * If a property name is provided for `predicate` the created `_.property`
+ * style callback returns the property value of the given element.
+ *
+ * If a value is also provided for `thisArg` the created `_.matchesProperty`
+ * style callback returns `true` for elements that have a matching property
+ * value, else `false`.
+ *
+ * If an object is provided for `predicate` the created `_.matches` style
+ * callback returns `true` for elements that have the properties of the given
+ * object, else `false`.
+ *
+ * @static
+ * @memberOf _
+ * @alias select
+ * @category Collection
+ * @param {Array|Object|string} collection The collection to iterate over.
+ * @param {Function|Object|string} [predicate=_.identity] The function invoked
+ *  per iteration.
+ * @param {*} [thisArg] The `this` binding of `predicate`.
+ * @returns {Array} Returns the new filtered array.
+ * @example
+ *
+ * _.filter([4, 5, 6], function(n) {
+ *   return n % 2 == 0;
+ * });
+ * // => [4, 6]
+ *
+ * var users = [
+ *   { 'user': 'barney', 'age': 36, 'active': true },
+ *   { 'user': 'fred',   'age': 40, 'active': false }
+ * ];
+ *
+ * // using the `_.matches` callback shorthand
+ * _.pluck(_.filter(users, { 'age': 36, 'active': true }), 'user');
+ * // => ['barney']
+ *
+ * // using the `_.matchesProperty` callback shorthand
+ * _.pluck(_.filter(users, 'active', false), 'user');
+ * // => ['fred']
+ *
+ * // using the `_.property` callback shorthand
+ * _.pluck(_.filter(users, 'active'), 'user');
+ * // => ['barney']
+ */
+function filter(collection, predicate, thisArg) {
+  var func = isArray(collection) ? arrayFilter : baseFilter;
+  predicate = baseCallback(predicate, thisArg, 3);
+  return func(collection, predicate);
+}
+
+module.exports = filter;
+
+},{"lodash._arrayfilter":24,"lodash._basecallback":25,"lodash._basefilter":30,"lodash.isarray":32}],24:[function(require,module,exports){
+/**
+ * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * A specialized version of `_.filter` for arrays without support for callback
+ * shorthands or `this` binding.
+ *
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the new filtered array.
+ */
+function arrayFilter(array, predicate) {
+  var index = -1,
+      length = array.length,
+      resIndex = -1,
+      result = [];
+
+  while (++index < length) {
+    var value = array[index];
+    if (predicate(value, index, array)) {
+      result[++resIndex] = value;
+    }
+  }
+  return result;
+}
+
+module.exports = arrayFilter;
+
+},{}],25:[function(require,module,exports){
+/**
+ * lodash 3.3.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var baseIsEqual = require('lodash._baseisequal'),
+    bindCallback = require('lodash._bindcallback'),
+    isArray = require('lodash.isarray'),
+    pairs = require('lodash.pairs');
+
+/** Used to match property names within property paths. */
+var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\n\\]|\\.)*?\1)\]/,
+    reIsPlainProp = /^\w*$/,
+    rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\n\\]|\\.)*?)\2)\]/g;
+
+/** Used to match backslashes in property paths. */
+var reEscapeChar = /\\(\\)?/g;
+
+/**
+ * Converts `value` to a string if it's not one. An empty string is returned
+ * for `null` or `undefined` values.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ */
+function baseToString(value) {
+  if (typeof value == 'string') {
+    return value;
+  }
+  return value == null ? '' : (value + '');
+}
+
+/**
+ * The base implementation of `_.callback` which supports specifying the
+ * number of arguments to provide to `func`.
+ *
+ * @private
+ * @param {*} [func=_.identity] The value to convert to a callback.
+ * @param {*} [thisArg] The `this` binding of `func`.
+ * @param {number} [argCount] The number of arguments to provide to `func`.
+ * @returns {Function} Returns the callback.
+ */
+function baseCallback(func, thisArg, argCount) {
+  var type = typeof func;
+  if (type == 'function') {
+    return thisArg === undefined
+      ? func
+      : bindCallback(func, thisArg, argCount);
+  }
+  if (func == null) {
+    return identity;
+  }
+  if (type == 'object') {
+    return baseMatches(func);
+  }
+  return thisArg === undefined
+    ? property(func)
+    : baseMatchesProperty(func, thisArg);
+}
+
+/**
+ * The base implementation of `get` without support for string paths
+ * and default values.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {Array} path The path of the property to get.
+ * @param {string} [pathKey] The key representation of path.
+ * @returns {*} Returns the resolved value.
+ */
+function baseGet(object, path, pathKey) {
+  if (object == null) {
+    return;
+  }
+  if (pathKey !== undefined && pathKey in toObject(object)) {
+    path = [pathKey];
+  }
+  var index = 0,
+      length = path.length;
+
+  while (object != null && index < length) {
+    object = object[path[index++]];
+  }
+  return (index && index == length) ? object : undefined;
+}
+
+/**
+ * The base implementation of `_.isMatch` without support for callback
+ * shorthands and `this` binding.
+ *
+ * @private
+ * @param {Object} object The object to inspect.
+ * @param {Array} matchData The propery names, values, and compare flags to match.
+ * @param {Function} [customizer] The function to customize comparing objects.
+ * @returns {boolean} Returns `true` if `object` is a match, else `false`.
+ */
+function baseIsMatch(object, matchData, customizer) {
+  var index = matchData.length,
+      length = index,
+      noCustomizer = !customizer;
+
+  if (object == null) {
+    return !length;
+  }
+  object = toObject(object);
+  while (index--) {
+    var data = matchData[index];
+    if ((noCustomizer && data[2])
+          ? data[1] !== object[data[0]]
+          : !(data[0] in object)
+        ) {
+      return false;
+    }
+  }
+  while (++index < length) {
+    data = matchData[index];
+    var key = data[0],
+        objValue = object[key],
+        srcValue = data[1];
+
+    if (noCustomizer && data[2]) {
+      if (objValue === undefined && !(key in object)) {
+        return false;
+      }
+    } else {
+      var result = customizer ? customizer(objValue, srcValue, key) : undefined;
+      if (!(result === undefined ? baseIsEqual(srcValue, objValue, customizer, true) : result)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+/**
+ * The base implementation of `_.matches` which does not clone `source`.
+ *
+ * @private
+ * @param {Object} source The object of property values to match.
+ * @returns {Function} Returns the new function.
+ */
+function baseMatches(source) {
+  var matchData = getMatchData(source);
+  if (matchData.length == 1 && matchData[0][2]) {
+    var key = matchData[0][0],
+        value = matchData[0][1];
+
+    return function(object) {
+      if (object == null) {
+        return false;
+      }
+      return object[key] === value && (value !== undefined || (key in toObject(object)));
+    };
+  }
+  return function(object) {
+    return baseIsMatch(object, matchData);
+  };
+}
+
+/**
+ * The base implementation of `_.matchesProperty` which does not which does
+ * not clone `value`.
+ *
+ * @private
+ * @param {string} path The path of the property to get.
+ * @param {*} srcValue The value to compare.
+ * @returns {Function} Returns the new function.
+ */
+function baseMatchesProperty(path, srcValue) {
+  var isArr = isArray(path),
+      isCommon = isKey(path) && isStrictComparable(srcValue),
+      pathKey = (path + '');
+
+  path = toPath(path);
+  return function(object) {
+    if (object == null) {
+      return false;
+    }
+    var key = pathKey;
+    object = toObject(object);
+    if ((isArr || !isCommon) && !(key in object)) {
+      object = path.length == 1 ? object : baseGet(object, baseSlice(path, 0, -1));
+      if (object == null) {
+        return false;
+      }
+      key = last(path);
+      object = toObject(object);
+    }
+    return object[key] === srcValue
+      ? (srcValue !== undefined || (key in object))
+      : baseIsEqual(srcValue, object[key], undefined, true);
+  };
+}
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
+ * A specialized version of `baseProperty` which supports deep paths.
+ *
+ * @private
+ * @param {Array|string} path The path of the property to get.
+ * @returns {Function} Returns the new function.
+ */
+function basePropertyDeep(path) {
+  var pathKey = (path + '');
+  path = toPath(path);
+  return function(object) {
+    return baseGet(object, path, pathKey);
+  };
+}
+
+/**
+ * The base implementation of `_.slice` without an iteratee call guard.
+ *
+ * @private
+ * @param {Array} array The array to slice.
+ * @param {number} [start=0] The start position.
+ * @param {number} [end=array.length] The end position.
+ * @returns {Array} Returns the slice of `array`.
+ */
+function baseSlice(array, start, end) {
+  var index = -1,
+      length = array.length;
+
+  start = start == null ? 0 : (+start || 0);
+  if (start < 0) {
+    start = -start > length ? 0 : (length + start);
+  }
+  end = (end === undefined || end > length) ? length : (+end || 0);
+  if (end < 0) {
+    end += length;
+  }
+  length = start > end ? 0 : ((end - start) >>> 0);
+  start >>>= 0;
+
+  var result = Array(length);
+  while (++index < length) {
+    result[index] = array[index + start];
+  }
+  return result;
+}
+
+/**
+ * Gets the propery names, values, and compare flags of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the match data of `object`.
+ */
+function getMatchData(object) {
+  var result = pairs(object),
+      length = result.length;
+
+  while (length--) {
+    result[length][2] = isStrictComparable(result[length][1]);
+  }
+  return result;
+}
+
+/**
+ * Checks if `value` is a property name and not a property path.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {Object} [object] The object to query keys on.
+ * @returns {boolean} Returns `true` if `value` is a property name, else `false`.
+ */
+function isKey(value, object) {
+  var type = typeof value;
+  if ((type == 'string' && reIsPlainProp.test(value)) || type == 'number') {
+    return true;
+  }
+  if (isArray(value)) {
+    return false;
+  }
+  var result = !reIsDeepProp.test(value);
+  return result || (object != null && value in toObject(object));
+}
+
+/**
+ * Checks if `value` is suitable for strict equality comparisons, i.e. `===`.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` if suitable for strict
+ *  equality comparisons, else `false`.
+ */
+function isStrictComparable(value) {
+  return value === value && !isObject(value);
+}
+
+/**
+ * Converts `value` to an object if it's not one.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {Object} Returns the object.
+ */
+function toObject(value) {
+  return isObject(value) ? value : Object(value);
+}
+
+/**
+ * Converts `value` to property path array if it's not one.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {Array} Returns the property path array.
+ */
+function toPath(value) {
+  if (isArray(value)) {
+    return value;
+  }
+  var result = [];
+  baseToString(value).replace(rePropName, function(match, number, quote, string) {
+    result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
+  });
+  return result;
+}
+
+/**
+ * Gets the last element of `array`.
+ *
+ * @static
+ * @memberOf _
+ * @category Array
+ * @param {Array} array The array to query.
+ * @returns {*} Returns the last element of `array`.
+ * @example
+ *
+ * _.last([1, 2, 3]);
+ * // => 3
+ */
+function last(array) {
+  var length = array ? array.length : 0;
+  return length ? array[length - 1] : undefined;
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(1);
+ * // => false
+ */
+function isObject(value) {
+  // Avoid a V8 JIT bug in Chrome 19-20.
+  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * This method returns the first argument provided to it.
+ *
+ * @static
+ * @memberOf _
+ * @category Utility
+ * @param {*} value Any value.
+ * @returns {*} Returns `value`.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ *
+ * _.identity(object) === object;
+ * // => true
+ */
+function identity(value) {
+  return value;
+}
+
+/**
+ * Creates a function which returns the property value at `path` on a
+ * given object.
+ *
+ * @static
+ * @memberOf _
+ * @category Utility
+ * @param {Array|string} path The path of the property to get.
+ * @returns {Function} Returns the new function.
+ * @example
+ *
+ * var objects = [
+ *   { 'a': { 'b': { 'c': 2 } } },
+ *   { 'a': { 'b': { 'c': 1 } } }
+ * ];
+ *
+ * _.map(objects, _.property('a.b.c'));
+ * // => [2, 1]
+ *
+ * _.pluck(_.sortBy(objects, _.property(['a', 'b', 'c'])), 'a.b.c');
+ * // => [1, 2]
+ */
+function property(path) {
+  return isKey(path) ? baseProperty(path) : basePropertyDeep(path);
+}
+
+module.exports = baseCallback;
+
+},{"lodash._baseisequal":26,"lodash._bindcallback":28,"lodash.isarray":32,"lodash.pairs":29}],26:[function(require,module,exports){
+/**
+ * lodash 3.0.7 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var isArray = require('lodash.isarray'),
+    isTypedArray = require('lodash.istypedarray'),
+    keys = require('lodash.keys');
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]',
+    arrayTag = '[object Array]',
+    boolTag = '[object Boolean]',
+    dateTag = '[object Date]',
+    errorTag = '[object Error]',
+    numberTag = '[object Number]',
+    objectTag = '[object Object]',
+    regexpTag = '[object RegExp]',
+    stringTag = '[object String]';
+
+/**
+ * Checks if `value` is object-like.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/** Used for native method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+ * of values.
+ */
+var objToString = objectProto.toString;
+
+/**
+ * A specialized version of `_.some` for arrays without support for callback
+ * shorthands and `this` binding.
+ *
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {boolean} Returns `true` if any element passes the predicate check,
+ *  else `false`.
+ */
+function arraySome(array, predicate) {
+  var index = -1,
+      length = array.length;
+
+  while (++index < length) {
+    if (predicate(array[index], index, array)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * The base implementation of `_.isEqual` without support for `this` binding
+ * `customizer` functions.
+ *
+ * @private
+ * @param {*} value The value to compare.
+ * @param {*} other The other value to compare.
+ * @param {Function} [customizer] The function to customize comparing values.
+ * @param {boolean} [isLoose] Specify performing partial comparisons.
+ * @param {Array} [stackA] Tracks traversed `value` objects.
+ * @param {Array} [stackB] Tracks traversed `other` objects.
+ * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+ */
+function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
+  if (value === other) {
+    return true;
+  }
+  if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
+    return value !== value && other !== other;
+  }
+  return baseIsEqualDeep(value, other, baseIsEqual, customizer, isLoose, stackA, stackB);
+}
+
+/**
+ * A specialized version of `baseIsEqual` for arrays and objects which performs
+ * deep comparisons and tracks traversed objects enabling objects with circular
+ * references to be compared.
+ *
+ * @private
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Function} [customizer] The function to customize comparing objects.
+ * @param {boolean} [isLoose] Specify performing partial comparisons.
+ * @param {Array} [stackA=[]] Tracks traversed `value` objects.
+ * @param {Array} [stackB=[]] Tracks traversed `other` objects.
+ * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+ */
+function baseIsEqualDeep(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
+  var objIsArr = isArray(object),
+      othIsArr = isArray(other),
+      objTag = arrayTag,
+      othTag = arrayTag;
+
+  if (!objIsArr) {
+    objTag = objToString.call(object);
+    if (objTag == argsTag) {
+      objTag = objectTag;
+    } else if (objTag != objectTag) {
+      objIsArr = isTypedArray(object);
+    }
+  }
+  if (!othIsArr) {
+    othTag = objToString.call(other);
+    if (othTag == argsTag) {
+      othTag = objectTag;
+    } else if (othTag != objectTag) {
+      othIsArr = isTypedArray(other);
+    }
+  }
+  var objIsObj = objTag == objectTag,
+      othIsObj = othTag == objectTag,
+      isSameTag = objTag == othTag;
+
+  if (isSameTag && !(objIsArr || objIsObj)) {
+    return equalByTag(object, other, objTag);
+  }
+  if (!isLoose) {
+    var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+        othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+
+    if (objIsWrapped || othIsWrapped) {
+      return equalFunc(objIsWrapped ? object.value() : object, othIsWrapped ? other.value() : other, customizer, isLoose, stackA, stackB);
+    }
+  }
+  if (!isSameTag) {
+    return false;
+  }
+  // Assume cyclic values are equal.
+  // For more information on detecting circular references see https://es5.github.io/#JO.
+  stackA || (stackA = []);
+  stackB || (stackB = []);
+
+  var length = stackA.length;
+  while (length--) {
+    if (stackA[length] == object) {
+      return stackB[length] == other;
+    }
+  }
+  // Add `object` and `other` to the stack of traversed objects.
+  stackA.push(object);
+  stackB.push(other);
+
+  var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isLoose, stackA, stackB);
+
+  stackA.pop();
+  stackB.pop();
+
+  return result;
+}
+
+/**
+ * A specialized version of `baseIsEqualDeep` for arrays with support for
+ * partial deep comparisons.
+ *
+ * @private
+ * @param {Array} array The array to compare.
+ * @param {Array} other The other array to compare.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Function} [customizer] The function to customize comparing arrays.
+ * @param {boolean} [isLoose] Specify performing partial comparisons.
+ * @param {Array} [stackA] Tracks traversed `value` objects.
+ * @param {Array} [stackB] Tracks traversed `other` objects.
+ * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
+ */
+function equalArrays(array, other, equalFunc, customizer, isLoose, stackA, stackB) {
+  var index = -1,
+      arrLength = array.length,
+      othLength = other.length;
+
+  if (arrLength != othLength && !(isLoose && othLength > arrLength)) {
+    return false;
+  }
+  // Ignore non-index properties.
+  while (++index < arrLength) {
+    var arrValue = array[index],
+        othValue = other[index],
+        result = customizer ? customizer(isLoose ? othValue : arrValue, isLoose ? arrValue : othValue, index) : undefined;
+
+    if (result !== undefined) {
+      if (result) {
+        continue;
+      }
+      return false;
+    }
+    // Recursively compare arrays (susceptible to call stack limits).
+    if (isLoose) {
+      if (!arraySome(other, function(othValue) {
+            return arrValue === othValue || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB);
+          })) {
+        return false;
+      }
+    } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * A specialized version of `baseIsEqualDeep` for comparing objects of
+ * the same `toStringTag`.
+ *
+ * **Note:** This function only supports comparing values with tags of
+ * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+ *
+ * @private
+ * @param {Object} value The object to compare.
+ * @param {Object} other The other object to compare.
+ * @param {string} tag The `toStringTag` of the objects to compare.
+ * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+ */
+function equalByTag(object, other, tag) {
+  switch (tag) {
+    case boolTag:
+    case dateTag:
+      // Coerce dates and booleans to numbers, dates to milliseconds and booleans
+      // to `1` or `0` treating invalid dates coerced to `NaN` as not equal.
+      return +object == +other;
+
+    case errorTag:
+      return object.name == other.name && object.message == other.message;
+
+    case numberTag:
+      // Treat `NaN` vs. `NaN` as equal.
+      return (object != +object)
+        ? other != +other
+        : object == +other;
+
+    case regexpTag:
+    case stringTag:
+      // Coerce regexes to strings and treat strings primitives and string
+      // objects as equal. See https://es5.github.io/#x15.10.6.4 for more details.
+      return object == (other + '');
+  }
+  return false;
+}
+
+/**
+ * A specialized version of `baseIsEqualDeep` for objects with support for
+ * partial deep comparisons.
+ *
+ * @private
+ * @param {Object} object The object to compare.
+ * @param {Object} other The other object to compare.
+ * @param {Function} equalFunc The function to determine equivalents of values.
+ * @param {Function} [customizer] The function to customize comparing values.
+ * @param {boolean} [isLoose] Specify performing partial comparisons.
+ * @param {Array} [stackA] Tracks traversed `value` objects.
+ * @param {Array} [stackB] Tracks traversed `other` objects.
+ * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+ */
+function equalObjects(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
+  var objProps = keys(object),
+      objLength = objProps.length,
+      othProps = keys(other),
+      othLength = othProps.length;
+
+  if (objLength != othLength && !isLoose) {
+    return false;
+  }
+  var index = objLength;
+  while (index--) {
+    var key = objProps[index];
+    if (!(isLoose ? key in other : hasOwnProperty.call(other, key))) {
+      return false;
+    }
+  }
+  var skipCtor = isLoose;
+  while (++index < objLength) {
+    key = objProps[index];
+    var objValue = object[key],
+        othValue = other[key],
+        result = customizer ? customizer(isLoose ? othValue : objValue, isLoose? objValue : othValue, key) : undefined;
+
+    // Recursively compare objects (susceptible to call stack limits).
+    if (!(result === undefined ? equalFunc(objValue, othValue, customizer, isLoose, stackA, stackB) : result)) {
+      return false;
+    }
+    skipCtor || (skipCtor = key == 'constructor');
+  }
+  if (!skipCtor) {
+    var objCtor = object.constructor,
+        othCtor = other.constructor;
+
+    // Non `Object` object instances with different constructors are not equal.
+    if (objCtor != othCtor &&
+        ('constructor' in object && 'constructor' in other) &&
+        !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
+          typeof othCtor == 'function' && othCtor instanceof othCtor)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(1);
+ * // => false
+ */
+function isObject(value) {
+  // Avoid a V8 JIT bug in Chrome 19-20.
+  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+module.exports = baseIsEqual;
+
+},{"lodash.isarray":32,"lodash.istypedarray":27,"lodash.keys":33}],27:[function(require,module,exports){
+/**
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]',
+    arrayTag = '[object Array]',
+    boolTag = '[object Boolean]',
+    dateTag = '[object Date]',
+    errorTag = '[object Error]',
+    funcTag = '[object Function]',
+    mapTag = '[object Map]',
+    numberTag = '[object Number]',
+    objectTag = '[object Object]',
+    regexpTag = '[object RegExp]',
+    setTag = '[object Set]',
+    stringTag = '[object String]',
+    weakMapTag = '[object WeakMap]';
+
+var arrayBufferTag = '[object ArrayBuffer]',
+    float32Tag = '[object Float32Array]',
+    float64Tag = '[object Float64Array]',
+    int8Tag = '[object Int8Array]',
+    int16Tag = '[object Int16Array]',
+    int32Tag = '[object Int32Array]',
+    uint8Tag = '[object Uint8Array]',
+    uint8ClampedTag = '[object Uint8ClampedArray]',
+    uint16Tag = '[object Uint16Array]',
+    uint32Tag = '[object Uint32Array]';
+
+/** Used to identify `toStringTag` values of typed arrays. */
+var typedArrayTags = {};
+typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
+typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
+typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
+typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
+typedArrayTags[uint32Tag] = true;
+typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
+typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
+typedArrayTags[dateTag] = typedArrayTags[errorTag] =
+typedArrayTags[funcTag] = typedArrayTags[mapTag] =
+typedArrayTags[numberTag] = typedArrayTags[objectTag] =
+typedArrayTags[regexpTag] = typedArrayTags[setTag] =
+typedArrayTags[stringTag] = typedArrayTags[weakMapTag] = false;
+
+/**
+ * Checks if `value` is object-like.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/** Used for native method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+ * of values.
+ */
+var objToString = objectProto.toString;
+
+/**
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
+ */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ */
+function isLength(value) {
+  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Checks if `value` is classified as a typed array.
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @example
+ *
+ * _.isTypedArray(new Uint8Array);
+ * // => true
+ *
+ * _.isTypedArray([]);
+ * // => false
+ */
+function isTypedArray(value) {
+  return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objToString.call(value)];
+}
+
+module.exports = isTypedArray;
+
+},{}],28:[function(require,module,exports){
+/**
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * A specialized version of `baseCallback` which only supports `this` binding
+ * and specifying the number of arguments to provide to `func`.
+ *
+ * @private
+ * @param {Function} func The function to bind.
+ * @param {*} thisArg The `this` binding of `func`.
+ * @param {number} [argCount] The number of arguments to provide to `func`.
+ * @returns {Function} Returns the callback.
+ */
+function bindCallback(func, thisArg, argCount) {
+  if (typeof func != 'function') {
+    return identity;
+  }
+  if (thisArg === undefined) {
+    return func;
+  }
+  switch (argCount) {
+    case 1: return function(value) {
+      return func.call(thisArg, value);
+    };
+    case 3: return function(value, index, collection) {
+      return func.call(thisArg, value, index, collection);
+    };
+    case 4: return function(accumulator, value, index, collection) {
+      return func.call(thisArg, accumulator, value, index, collection);
+    };
+    case 5: return function(value, other, key, object, source) {
+      return func.call(thisArg, value, other, key, object, source);
+    };
+  }
+  return function() {
+    return func.apply(thisArg, arguments);
+  };
+}
+
+/**
+ * This method returns the first argument provided to it.
+ *
+ * @static
+ * @memberOf _
+ * @category Utility
+ * @param {*} value Any value.
+ * @returns {*} Returns `value`.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ *
+ * _.identity(object) === object;
+ * // => true
+ */
+function identity(value) {
+  return value;
+}
+
+module.exports = bindCallback;
+
+},{}],29:[function(require,module,exports){
+/**
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var keys = require('lodash.keys');
+
+/**
+ * Converts `value` to an object if it's not one.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {Object} Returns the object.
+ */
+function toObject(value) {
+  return isObject(value) ? value : Object(value);
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(1);
+ * // => false
+ */
+function isObject(value) {
+  // Avoid a V8 JIT bug in Chrome 19-20.
+  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Creates a two dimensional array of the key-value pairs for `object`,
+ * e.g. `[[key1, value1], [key2, value2]]`.
+ *
+ * @static
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the new array of key-value pairs.
+ * @example
+ *
+ * _.pairs({ 'barney': 36, 'fred': 40 });
+ * // => [['barney', 36], ['fred', 40]] (iteration order is not guaranteed)
+ */
+function pairs(object) {
+  object = toObject(object);
+
+  var index = -1,
+      props = keys(object),
+      length = props.length,
+      result = Array(length);
+
+  while (++index < length) {
+    var key = props[index];
+    result[index] = [key, object[key]];
+  }
+  return result;
+}
+
+module.exports = pairs;
+
+},{"lodash.keys":33}],30:[function(require,module,exports){
+/**
+ * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var baseEach = require('lodash._baseeach');
+
+/**
+ * The base implementation of `_.filter` without support for callback
+ * shorthands or `this` binding.
+ *
+ * @private
+ * @param {Array|Object|string} collection The collection to iterate over.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Array} Returns the new filtered array.
+ */
+function baseFilter(collection, predicate) {
+  var result = [];
+  baseEach(collection, function(value, index, collection) {
+    if (predicate(value, index, collection)) {
+      result.push(value);
+    }
+  });
+  return result;
+}
+
+module.exports = baseFilter;
+
+},{"lodash._baseeach":31}],31:[function(require,module,exports){
+/**
+ * lodash 3.0.4 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var keys = require('lodash.keys');
+
+/**
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
+ */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/**
+ * The base implementation of `_.forEach` without support for callback
+ * shorthands and `this` binding.
+ *
+ * @private
+ * @param {Array|Object|string} collection The collection to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array|Object|string} Returns `collection`.
+ */
+var baseEach = createBaseEach(baseForOwn);
+
+/**
+ * The base implementation of `baseForIn` and `baseForOwn` which iterates
+ * over `object` properties returned by `keysFunc` invoking `iteratee` for
+ * each property. Iteratee functions may exit iteration early by explicitly
+ * returning `false`.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @param {Function} keysFunc The function to get the keys of `object`.
+ * @returns {Object} Returns `object`.
+ */
+var baseFor = createBaseFor();
+
+/**
+ * The base implementation of `_.forOwn` without support for callback
+ * shorthands and `this` binding.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Object} Returns `object`.
+ */
+function baseForOwn(object, iteratee) {
+  return baseFor(object, iteratee, keys);
+}
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
+ * Creates a `baseEach` or `baseEachRight` function.
+ *
+ * @private
+ * @param {Function} eachFunc The function to iterate over a collection.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new base function.
+ */
+function createBaseEach(eachFunc, fromRight) {
+  return function(collection, iteratee) {
+    var length = collection ? getLength(collection) : 0;
+    if (!isLength(length)) {
+      return eachFunc(collection, iteratee);
+    }
+    var index = fromRight ? length : -1,
+        iterable = toObject(collection);
+
+    while ((fromRight ? index-- : ++index < length)) {
+      if (iteratee(iterable[index], index, iterable) === false) {
+        break;
+      }
+    }
+    return collection;
+  };
+}
+
+/**
+ * Creates a base function for `_.forIn` or `_.forInRight`.
+ *
+ * @private
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new base function.
+ */
+function createBaseFor(fromRight) {
+  return function(object, iteratee, keysFunc) {
+    var iterable = toObject(object),
+        props = keysFunc(object),
+        length = props.length,
+        index = fromRight ? length : -1;
+
+    while ((fromRight ? index-- : ++index < length)) {
+      var key = props[index];
+      if (iteratee(iterable[key], key, iterable) === false) {
+        break;
+      }
+    }
+    return object;
+  };
+}
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+ * that affects Safari on at least iOS 8.1-8.3 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ */
+function isLength(value) {
+  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Converts `value` to an object if it's not one.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {Object} Returns the object.
+ */
+function toObject(value) {
+  return isObject(value) ? value : Object(value);
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(1);
+ * // => false
+ */
+function isObject(value) {
+  // Avoid a V8 JIT bug in Chrome 19-20.
+  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+module.exports = baseEach;
+
+},{"lodash.keys":33}],32:[function(require,module,exports){
+/**
+ * lodash 3.0.3 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/** `Object#toString` result references. */
+var arrayTag = '[object Array]',
+    funcTag = '[object Function]';
+
+/**
+ * Used to match `RegExp` [special characters](http://www.regular-expressions.info/characters.html#special).
+ * In addition to special characters the forward slash is escaped to allow for
+ * easier `eval` use and `Function` compilation.
+ */
+var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g,
+    reHasRegExpChars = RegExp(reRegExpChars.source);
+
+/** Used to detect host constructors (Safari > 5). */
+var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+/**
+ * Converts `value` to a string if it's not one. An empty string is returned
+ * for `null` or `undefined` values.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ */
+function baseToString(value) {
+  if (typeof value == 'string') {
+    return value;
+  }
+  return value == null ? '' : (value + '');
+}
+
+/**
+ * Checks if `value` is object-like.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/** Used for native method references. */
+var objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var fnToString = Function.prototype.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+ * of values.
+ */
+var objToString = objectProto.toString;
+
+/** Used to detect if a method is native. */
+var reIsNative = RegExp('^' +
+  escapeRegExp(fnToString.call(hasOwnProperty))
+  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+);
+
+/* Native method references for those with the same name as other `lodash` methods. */
+var nativeIsArray = getNative(Array, 'isArray');
+
+/**
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
+ */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/**
+ * Gets the native function at `key` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {string} key The key of the method to get.
+ * @returns {*} Returns the function if it's native, else `undefined`.
+ */
+function getNative(object, key) {
+  var value = object == null ? undefined : object[key];
+  return isNative(value) ? value : undefined;
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ */
+function isLength(value) {
+  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Checks if `value` is classified as an `Array` object.
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @example
+ *
+ * _.isArray([1, 2, 3]);
+ * // => true
+ *
+ * _.isArray(function() { return arguments; }());
+ * // => false
+ */
+var isArray = nativeIsArray || function(value) {
+  return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
+};
+
+/**
+ * Checks if `value` is a native function.
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+ * @example
+ *
+ * _.isNative(Array.prototype.push);
+ * // => true
+ *
+ * _.isNative(_);
+ * // => false
+ */
+function isNative(value) {
+  if (value == null) {
+    return false;
+  }
+  if (objToString.call(value) == funcTag) {
+    return reIsNative.test(fnToString.call(value));
+  }
+  return isObjectLike(value) && reIsHostCtor.test(value);
+}
+
+/**
+ * Escapes the `RegExp` special characters "\", "/", "^", "$", ".", "|", "?",
+ * "*", "+", "(", ")", "[", "]", "{" and "}" in `string`.
+ *
+ * @static
+ * @memberOf _
+ * @category String
+ * @param {string} [string=''] The string to escape.
+ * @returns {string} Returns the escaped string.
+ * @example
+ *
+ * _.escapeRegExp('[lodash](https://lodash.com/)');
+ * // => '\[lodash\]\(https:\/\/lodash\.com\/\)'
+ */
+function escapeRegExp(string) {
+  string = baseToString(string);
+  return (string && reHasRegExpChars.test(string))
+    ? string.replace(reRegExpChars, '\\$&')
+    : string;
+}
+
+module.exports = isArray;
+
+},{}],33:[function(require,module,exports){
+/**
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var getNative = require('lodash._getnative'),
+    isArguments = require('lodash.isarguments'),
+    isArray = require('lodash.isarray');
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^\d+$/;
+
+/** Used for native method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/* Native method references for those with the same name as other `lodash` methods. */
+var nativeKeys = getNative(Object, 'keys');
+
+/**
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
+ */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+ * that affects Safari on at least iOS 8.1-8.3 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
+
+/**
+ * Checks if `value` is array-like.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ */
+function isArrayLike(value) {
+  return value != null && isLength(getLength(value));
+}
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return value > -1 && value % 1 == 0 && value < length;
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ */
+function isLength(value) {
+  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * A fallback implementation of `Object.keys` which creates an array of the
+ * own enumerable property names of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ */
+function shimKeys(object) {
+  var props = keysIn(object),
+      propsLength = props.length,
+      length = propsLength && object.length;
+
+  var allowIndexes = !!length && isLength(length) &&
+    (isArray(object) || isArguments(object));
+
+  var index = -1,
+      result = [];
+
+  while (++index < propsLength) {
+    var key = props[index];
+    if ((allowIndexes && isIndex(key, length)) || hasOwnProperty.call(object, key)) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(1);
+ * // => false
+ */
+function isObject(value) {
+  // Avoid a V8 JIT bug in Chrome 19-20.
+  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Creates an array of the own enumerable property names of `object`.
+ *
+ * **Note:** Non-object values are coerced to objects. See the
+ * [ES spec](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.keys)
+ * for more details.
+ *
+ * @static
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.keys(new Foo);
+ * // => ['a', 'b'] (iteration order is not guaranteed)
+ *
+ * _.keys('hi');
+ * // => ['0', '1']
+ */
+var keys = !nativeKeys ? shimKeys : function(object) {
+  var Ctor = object == null ? null : object.constructor;
+  if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
+      (typeof object != 'function' && isArrayLike(object))) {
+    return shimKeys(object);
+  }
+  return isObject(object) ? nativeKeys(object) : [];
+};
+
+/**
+ * Creates an array of the own and inherited enumerable property names of `object`.
+ *
+ * **Note:** Non-object values are coerced to objects.
+ *
+ * @static
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.keysIn(new Foo);
+ * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
+ */
+function keysIn(object) {
+  if (object == null) {
+    return [];
+  }
+  if (!isObject(object)) {
+    object = Object(object);
+  }
+  var length = object.length;
+  length = (length && isLength(length) &&
+    (isArray(object) || isArguments(object)) && length) || 0;
+
+  var Ctor = object.constructor,
+      index = -1,
+      isProto = typeof Ctor == 'function' && Ctor.prototype === object,
+      result = Array(length),
+      skipIndexes = length > 0;
+
+  while (++index < length) {
+    result[index] = (index + '');
+  }
+  for (var key in object) {
+    if (!(skipIndexes && isIndex(key, length)) &&
+        !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+module.exports = keys;
+
+},{"lodash._getnative":34,"lodash.isarguments":35,"lodash.isarray":32}],34:[function(require,module,exports){
+/**
+ * lodash 3.9.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/** `Object#toString` result references. */
+var funcTag = '[object Function]';
+
+/**
+ * Used to match `RegExp` [special characters](http://www.regular-expressions.info/characters.html#special).
+ * In addition to special characters the forward slash is escaped to allow for
+ * easier `eval` use and `Function` compilation.
+ */
+var reRegExpChars = /[.*+?^${}()|[\]\/\\]/g,
+    reHasRegExpChars = RegExp(reRegExpChars.source);
+
+/** Used to detect host constructors (Safari > 5). */
+var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+/**
+ * Converts `value` to a string if it's not one. An empty string is returned
+ * for `null` or `undefined` values.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ */
+function baseToString(value) {
+  if (typeof value == 'string') {
+    return value;
+  }
+  return value == null ? '' : (value + '');
+}
+
+/**
+ * Checks if `value` is object-like.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/** Used for native method references. */
+var objectProto = Object.prototype;
+
+/** Used to resolve the decompiled source of functions. */
+var fnToString = Function.prototype.toString;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+ * of values.
+ */
+var objToString = objectProto.toString;
+
+/** Used to detect if a method is native. */
+var reIsNative = RegExp('^' +
+  escapeRegExp(fnToString.call(hasOwnProperty))
+  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+);
+
+/**
+ * Gets the native function at `key` of `object`.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {string} key The key of the method to get.
+ * @returns {*} Returns the function if it's native, else `undefined`.
+ */
+function getNative(object, key) {
+  var value = object == null ? undefined : object[key];
+  return isNative(value) ? value : undefined;
+}
+
+/**
+ * Checks if `value` is a native function.
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+ * @example
+ *
+ * _.isNative(Array.prototype.push);
+ * // => true
+ *
+ * _.isNative(_);
+ * // => false
+ */
+function isNative(value) {
+  if (value == null) {
+    return false;
+  }
+  if (objToString.call(value) == funcTag) {
+    return reIsNative.test(fnToString.call(value));
+  }
+  return isObjectLike(value) && reIsHostCtor.test(value);
+}
+
+/**
+ * Escapes the `RegExp` special characters "\", "/", "^", "$", ".", "|", "?",
+ * "*", "+", "(", ")", "[", "]", "{" and "}" in `string`.
+ *
+ * @static
+ * @memberOf _
+ * @category String
+ * @param {string} [string=''] The string to escape.
+ * @returns {string} Returns the escaped string.
+ * @example
+ *
+ * _.escapeRegExp('[lodash](https://lodash.com/)');
+ * // => '\[lodash\]\(https:\/\/lodash\.com\/\)'
+ */
+function escapeRegExp(string) {
+  string = baseToString(string);
+  return (string && reHasRegExpChars.test(string))
+    ? string.replace(reRegExpChars, '\\$&')
+    : string;
+}
+
+module.exports = getNative;
+
+},{}],35:[function(require,module,exports){
+/**
+ * lodash 3.0.3 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/** `Object#toString` result references. */
+var argsTag = '[object Arguments]';
+
+/**
+ * Checks if `value` is object-like.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/** Used for native method references. */
+var objectProto = Object.prototype;
+
+/**
+ * Used to resolve the [`toStringTag`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-object.prototype.tostring)
+ * of values.
+ */
+var objToString = objectProto.toString;
+
+/**
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
+ */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+ * that affects Safari on at least iOS 8.1-8.3 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
+
+/**
+ * Checks if `value` is array-like.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ */
+function isArrayLike(value) {
+  return value != null && isLength(getLength(value));
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ */
+function isLength(value) {
+  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Checks if `value` is classified as an `arguments` object.
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+ * @example
+ *
+ * _.isArguments(function() { return arguments; }());
+ * // => true
+ *
+ * _.isArguments([1, 2, 3]);
+ * // => false
+ */
+function isArguments(value) {
+  return isObjectLike(value) && isArrayLike(value) && objToString.call(value) == argsTag;
+}
+
+module.exports = isArguments;
+
+},{}],36:[function(require,module,exports){
+/**
+ * lodash 3.2.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var baseCallback = require('lodash._basecallback'),
+    baseEach = require('lodash._baseeach'),
+    baseFind = require('lodash._basefind'),
+    baseFindIndex = require('lodash._basefindindex'),
+    isArray = require('lodash.isarray');
+
+/**
+ * Creates a `_.find` or `_.findLast` function.
+ *
+ * @private
+ * @param {Function} eachFunc The function to iterate over a collection.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new find function.
+ */
+function createFind(eachFunc, fromRight) {
+  return function(collection, predicate, thisArg) {
+    predicate = baseCallback(predicate, thisArg, 3);
+    if (isArray(collection)) {
+      var index = baseFindIndex(collection, predicate, fromRight);
+      return index > -1 ? collection[index] : undefined;
+    }
+    return baseFind(collection, predicate, eachFunc);
+  };
+}
+
+/**
+ * Iterates over elements of `collection`, returning the first element
+ * `predicate` returns truthy for. The predicate is bound to `thisArg` and
+ * invoked with three arguments: (value, index|key, collection).
+ *
+ * If a property name is provided for `predicate` the created `_.property`
+ * style callback returns the property value of the given element.
+ *
+ * If a value is also provided for `thisArg` the created `_.matchesProperty`
+ * style callback returns `true` for elements that have a matching property
+ * value, else `false`.
+ *
+ * If an object is provided for `predicate` the created `_.matches` style
+ * callback returns `true` for elements that have the properties of the given
+ * object, else `false`.
+ *
+ * @static
+ * @memberOf _
+ * @alias detect
+ * @category Collection
+ * @param {Array|Object|string} collection The collection to search.
+ * @param {Function|Object|string} [predicate=_.identity] The function invoked
+ *  per iteration.
+ * @param {*} [thisArg] The `this` binding of `predicate`.
+ * @returns {*} Returns the matched element, else `undefined`.
+ * @example
+ *
+ * var users = [
+ *   { 'user': 'barney',  'age': 36, 'active': true },
+ *   { 'user': 'fred',    'age': 40, 'active': false },
+ *   { 'user': 'pebbles', 'age': 1,  'active': true }
+ * ];
+ *
+ * _.result(_.find(users, function(chr) {
+ *   return chr.age < 40;
+ * }), 'user');
+ * // => 'barney'
+ *
+ * // using the `_.matches` callback shorthand
+ * _.result(_.find(users, { 'age': 1, 'active': true }), 'user');
+ * // => 'pebbles'
+ *
+ * // using the `_.matchesProperty` callback shorthand
+ * _.result(_.find(users, 'active', false), 'user');
+ * // => 'fred'
+ *
+ * // using the `_.property` callback shorthand
+ * _.result(_.find(users, 'active'), 'user');
+ * // => 'barney'
+ */
+var find = createFind(baseEach);
+
+module.exports = find;
+
+},{"lodash._basecallback":37,"lodash._baseeach":42,"lodash._basefind":43,"lodash._basefindindex":44,"lodash.isarray":45}],37:[function(require,module,exports){
+arguments[4][25][0].apply(exports,arguments)
+},{"dup":25,"lodash._baseisequal":38,"lodash._bindcallback":40,"lodash.isarray":45,"lodash.pairs":41}],38:[function(require,module,exports){
+arguments[4][26][0].apply(exports,arguments)
+},{"dup":26,"lodash.isarray":45,"lodash.istypedarray":39,"lodash.keys":46}],39:[function(require,module,exports){
+arguments[4][27][0].apply(exports,arguments)
+},{"dup":27}],40:[function(require,module,exports){
+arguments[4][28][0].apply(exports,arguments)
+},{"dup":28}],41:[function(require,module,exports){
+arguments[4][29][0].apply(exports,arguments)
+},{"dup":29,"lodash.keys":46}],42:[function(require,module,exports){
+arguments[4][31][0].apply(exports,arguments)
+},{"dup":31,"lodash.keys":46}],43:[function(require,module,exports){
+/**
+ * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * The base implementation of `_.find`, `_.findLast`, `_.findKey`, and `_.findLastKey`,
+ * without support for callback shorthands and `this` binding, which iterates
+ * over `collection` using the provided `eachFunc`.
+ *
+ * @private
+ * @param {Array|Object|string} collection The collection to search.
+ * @param {Function} predicate The function invoked per iteration.
+ * @param {Function} eachFunc The function to iterate over `collection`.
+ * @param {boolean} [retKey] Specify returning the key of the found element
+ *  instead of the element itself.
+ * @returns {*} Returns the found element or its key, else `undefined`.
+ */
+function baseFind(collection, predicate, eachFunc, retKey) {
+  var result;
+  eachFunc(collection, function(value, key, collection) {
+    if (predicate(value, key, collection)) {
+      result = retKey ? key : value;
+      return false;
+    }
+  });
+  return result;
+}
+
+module.exports = baseFind;
+
+},{}],44:[function(require,module,exports){
+/**
+ * lodash 3.6.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * The base implementation of `_.findIndex` and `_.findLastIndex` without
+ * support for callback shorthands and `this` binding.
+ *
+ * @private
+ * @param {Array} array The array to search.
+ * @param {Function} predicate The function invoked per iteration.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function baseFindIndex(array, predicate, fromRight) {
+  var length = array.length,
+      index = fromRight ? length : -1;
+
+  while ((fromRight ? index-- : ++index < length)) {
+    if (predicate(array[index], index, array)) {
+      return index;
+    }
+  }
+  return -1;
+}
+
+module.exports = baseFindIndex;
+
+},{}],45:[function(require,module,exports){
+arguments[4][32][0].apply(exports,arguments)
+},{"dup":32}],46:[function(require,module,exports){
+arguments[4][33][0].apply(exports,arguments)
+},{"dup":33,"lodash._getnative":47,"lodash.isarguments":48,"lodash.isarray":45}],47:[function(require,module,exports){
+arguments[4][34][0].apply(exports,arguments)
+},{"dup":34}],48:[function(require,module,exports){
+arguments[4][35][0].apply(exports,arguments)
+},{"dup":35}],49:[function(require,module,exports){
+/**
  * lodash 3.0.1 (Custom Build) <https://lodash.com/>
  * Build: `lodash modern modularize exports="npm" -o ./`
  * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
@@ -4415,7 +6603,1138 @@ function isError(value) {
 
 module.exports = isError;
 
-},{}],24:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
+/**
+ * lodash 3.0.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var baseCallback = require('lodash._basecallback'),
+    baseFor = require('lodash._basefor'),
+    keys = require('lodash.keys');
+
+/**
+ * The base implementation of `_.forOwn` without support for callback
+ * shorthands and `this` binding.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Object} Returns `object`.
+ */
+function baseForOwn(object, iteratee) {
+  return baseFor(object, iteratee, keys);
+}
+
+/**
+ * Creates a function for `_.mapKeys` or `_.mapValues`.
+ *
+ * @private
+ * @param {boolean} [isMapKeys] Specify mapping keys instead of values.
+ * @returns {Function} Returns the new map function.
+ */
+function createObjectMapper(isMapKeys) {
+  return function(object, iteratee, thisArg) {
+    var result = {};
+    iteratee = baseCallback(iteratee, thisArg, 3);
+
+    baseForOwn(object, function(value, key, object) {
+      var mapped = iteratee(value, key, object);
+      key = isMapKeys ? mapped : key;
+      value = isMapKeys ? value : mapped;
+      result[key] = value;
+    });
+    return result;
+  };
+}
+
+/**
+ * Creates an object with the same keys as `object` and values generated by
+ * running each own enumerable property of `object` through `iteratee`. The
+ * iteratee function is bound to `thisArg` and invoked with three arguments:
+ * (value, key, object).
+ *
+ * If a property name is provided for `iteratee` the created `_.property`
+ * style callback returns the property value of the given element.
+ *
+ * If a value is also provided for `thisArg` the created `_.matchesProperty`
+ * style callback returns `true` for elements that have a matching property
+ * value, else `false`.
+ *
+ * If an object is provided for `iteratee` the created `_.matches` style
+ * callback returns `true` for elements that have the properties of the given
+ * object, else `false`.
+ *
+ * @static
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to iterate over.
+ * @param {Function|Object|string} [iteratee=_.identity] The function invoked
+ *  per iteration.
+ * @param {*} [thisArg] The `this` binding of `iteratee`.
+ * @returns {Object} Returns the new mapped object.
+ * @example
+ *
+ * _.mapValues({ 'a': 1, 'b': 2 }, function(n) {
+ *   return n * 3;
+ * });
+ * // => { 'a': 3, 'b': 6 }
+ *
+ * var users = {
+ *   'fred':    { 'user': 'fred',    'age': 40 },
+ *   'pebbles': { 'user': 'pebbles', 'age': 1 }
+ * };
+ *
+ * // using the `_.property` callback shorthand
+ * _.mapValues(users, 'age');
+ * // => { 'fred': 40, 'pebbles': 1 } (iteration order is not guaranteed)
+ */
+var mapValues = createObjectMapper();
+
+module.exports = mapValues;
+
+},{"lodash._basecallback":51,"lodash._basefor":57,"lodash.keys":58}],51:[function(require,module,exports){
+arguments[4][25][0].apply(exports,arguments)
+},{"dup":25,"lodash._baseisequal":52,"lodash._bindcallback":54,"lodash.isarray":55,"lodash.pairs":56}],52:[function(require,module,exports){
+arguments[4][26][0].apply(exports,arguments)
+},{"dup":26,"lodash.isarray":55,"lodash.istypedarray":53,"lodash.keys":58}],53:[function(require,module,exports){
+arguments[4][27][0].apply(exports,arguments)
+},{"dup":27}],54:[function(require,module,exports){
+arguments[4][28][0].apply(exports,arguments)
+},{"dup":28}],55:[function(require,module,exports){
+arguments[4][32][0].apply(exports,arguments)
+},{"dup":32}],56:[function(require,module,exports){
+arguments[4][29][0].apply(exports,arguments)
+},{"dup":29,"lodash.keys":58}],57:[function(require,module,exports){
+/**
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * The base implementation of `baseForIn` and `baseForOwn` which iterates
+ * over `object` properties returned by `keysFunc` invoking `iteratee` for
+ * each property. Iteratee functions may exit iteration early by explicitly
+ * returning `false`.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @param {Function} keysFunc The function to get the keys of `object`.
+ * @returns {Object} Returns `object`.
+ */
+var baseFor = createBaseFor();
+
+/**
+ * Creates a base function for `_.forIn` or `_.forInRight`.
+ *
+ * @private
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {Function} Returns the new base function.
+ */
+function createBaseFor(fromRight) {
+  return function(object, iteratee, keysFunc) {
+    var iterable = toObject(object),
+        props = keysFunc(object),
+        length = props.length,
+        index = fromRight ? length : -1;
+
+    while ((fromRight ? index-- : ++index < length)) {
+      var key = props[index];
+      if (iteratee(iterable[key], key, iterable) === false) {
+        break;
+      }
+    }
+    return object;
+  };
+}
+
+/**
+ * Converts `value` to an object if it's not one.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {Object} Returns the object.
+ */
+function toObject(value) {
+  return isObject(value) ? value : Object(value);
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(1);
+ * // => false
+ */
+function isObject(value) {
+  // Avoid a V8 JIT bug in Chrome 19-20.
+  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+module.exports = baseFor;
+
+},{}],58:[function(require,module,exports){
+arguments[4][33][0].apply(exports,arguments)
+},{"dup":33,"lodash._getnative":59,"lodash.isarguments":60,"lodash.isarray":61}],59:[function(require,module,exports){
+arguments[4][34][0].apply(exports,arguments)
+},{"dup":34}],60:[function(require,module,exports){
+arguments[4][35][0].apply(exports,arguments)
+},{"dup":35}],61:[function(require,module,exports){
+arguments[4][32][0].apply(exports,arguments)
+},{"dup":32}],62:[function(require,module,exports){
+/**
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var arrayMap = require('lodash._arraymap'),
+    baseDifference = require('lodash._basedifference'),
+    baseFlatten = require('lodash._baseflatten'),
+    bindCallback = require('lodash._bindcallback'),
+    pickByArray = require('lodash._pickbyarray'),
+    pickByCallback = require('lodash._pickbycallback'),
+    keysIn = require('lodash.keysin'),
+    restParam = require('lodash.restparam');
+
+/**
+ * The opposite of `_.pick`; this method creates an object composed of the
+ * own and inherited enumerable properties of `object` that are not omitted.
+ * Property names may be specified as individual arguments or as arrays of
+ * property names. If `predicate` is provided it is invoked for each property
+ * of `object` omitting the properties `predicate` returns truthy for. The
+ * predicate is bound to `thisArg` and invoked with three arguments:
+ * (value, key, object).
+ *
+ * @static
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The source object.
+ * @param {Function|...(string|string[])} [predicate] The function invoked per
+ *  iteration or property names to omit, specified as individual property
+ *  names or arrays of property names.
+ * @param {*} [thisArg] The `this` binding of `predicate`.
+ * @returns {Object} Returns the new object.
+ * @example
+ *
+ * var object = { 'user': 'fred', 'age': 40 };
+ *
+ * _.omit(object, 'age');
+ * // => { 'user': 'fred' }
+ *
+ * _.omit(object, _.isNumber);
+ * // => { 'user': 'fred' }
+ */
+var omit = restParam(function(object, props) {
+  if (object == null) {
+    return {};
+  }
+  if (typeof props[0] != 'function') {
+    var props = arrayMap(baseFlatten(props), String);
+    return pickByArray(object, baseDifference(keysIn(object), props));
+  }
+  var predicate = bindCallback(props[0], props[1], 3);
+  return pickByCallback(object, function(value, key, object) {
+    return !predicate(value, key, object);
+  });
+});
+
+module.exports = omit;
+
+},{"lodash._arraymap":63,"lodash._basedifference":64,"lodash._baseflatten":69,"lodash._bindcallback":72,"lodash._pickbyarray":73,"lodash._pickbycallback":74,"lodash.keysin":76,"lodash.restparam":79}],63:[function(require,module,exports){
+/**
+ * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * A specialized version of `_.map` for arrays without support for callback
+ * shorthands or `this` binding.
+ *
+ * @private
+ * @param {Array} array The array to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Array} Returns the new mapped array.
+ */
+function arrayMap(array, iteratee) {
+  var index = -1,
+      length = array.length,
+      result = Array(length);
+
+  while (++index < length) {
+    result[index] = iteratee(array[index], index, array);
+  }
+  return result;
+}
+
+module.exports = arrayMap;
+
+},{}],64:[function(require,module,exports){
+/**
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var baseIndexOf = require('lodash._baseindexof'),
+    cacheIndexOf = require('lodash._cacheindexof'),
+    createCache = require('lodash._createcache');
+
+/**
+ * The base implementation of `_.difference` which accepts a single array
+ * of values to exclude.
+ *
+ * @private
+ * @param {Array} array The array to inspect.
+ * @param {Array} values The values to exclude.
+ * @returns {Array} Returns the new array of filtered values.
+ */
+function baseDifference(array, values) {
+  var length = array ? array.length : 0,
+      result = [];
+
+  if (!length) {
+    return result;
+  }
+  var index = -1,
+      indexOf = baseIndexOf,
+      isCommon = true,
+      cache = (isCommon && values.length >= 200) ? createCache(values) : null,
+      valuesLength = values.length;
+
+  if (cache) {
+    indexOf = cacheIndexOf;
+    isCommon = false;
+    values = cache;
+  }
+  outer:
+  while (++index < length) {
+    var value = array[index];
+
+    if (isCommon && value === value) {
+      var valuesIndex = valuesLength;
+      while (valuesIndex--) {
+        if (values[valuesIndex] === value) {
+          continue outer;
+        }
+      }
+      result.push(value);
+    }
+    else if (indexOf(values, value, 0) < 0) {
+      result.push(value);
+    }
+  }
+  return result;
+}
+
+module.exports = baseDifference;
+
+},{"lodash._baseindexof":65,"lodash._cacheindexof":66,"lodash._createcache":67}],65:[function(require,module,exports){
+/**
+ * lodash 3.1.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.2 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * The base implementation of `_.indexOf` without support for binary searches.
+ *
+ * @private
+ * @param {Array} array The array to search.
+ * @param {*} value The value to search for.
+ * @param {number} fromIndex The index to search from.
+ * @returns {number} Returns the index of the matched value, else `-1`.
+ */
+function baseIndexOf(array, value, fromIndex) {
+  if (value !== value) {
+    return indexOfNaN(array, fromIndex);
+  }
+  var index = fromIndex - 1,
+      length = array.length;
+
+  while (++index < length) {
+    if (array[index] === value) {
+      return index;
+    }
+  }
+  return -1;
+}
+
+/**
+ * Gets the index at which the first occurrence of `NaN` is found in `array`.
+ * If `fromRight` is provided elements of `array` are iterated from right to left.
+ *
+ * @private
+ * @param {Array} array The array to search.
+ * @param {number} fromIndex The index to search from.
+ * @param {boolean} [fromRight] Specify iterating from right to left.
+ * @returns {number} Returns the index of the matched `NaN`, else `-1`.
+ */
+function indexOfNaN(array, fromIndex, fromRight) {
+  var length = array.length,
+      index = fromIndex + (fromRight ? 0 : -1);
+
+  while ((fromRight ? index-- : ++index < length)) {
+    var other = array[index];
+    if (other !== other) {
+      return index;
+    }
+  }
+  return -1;
+}
+
+module.exports = baseIndexOf;
+
+},{}],66:[function(require,module,exports){
+/**
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * Checks if `value` is in `cache` mimicking the return signature of
+ * `_.indexOf` by returning `0` if the value is found, else `-1`.
+ *
+ * @private
+ * @param {Object} cache The cache to search.
+ * @param {*} value The value to search for.
+ * @returns {number} Returns `0` if `value` is found, else `-1`.
+ */
+function cacheIndexOf(cache, value) {
+  var data = cache.data,
+      result = (typeof value == 'string' || isObject(value)) ? data.set.has(value) : data.hash[value];
+
+  return result ? 0 : -1;
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(1);
+ * // => false
+ */
+function isObject(value) {
+  // Avoid a V8 JIT bug in Chrome 19-20.
+  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+module.exports = cacheIndexOf;
+
+},{}],67:[function(require,module,exports){
+(function (global){
+/**
+ * lodash 3.1.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var getNative = require('lodash._getnative');
+
+/** Native method references. */
+var Set = getNative(global, 'Set');
+
+/* Native method references for those with the same name as other `lodash` methods. */
+var nativeCreate = getNative(Object, 'create');
+
+/**
+ *
+ * Creates a cache object to store unique values.
+ *
+ * @private
+ * @param {Array} [values] The values to cache.
+ */
+function SetCache(values) {
+  var length = values ? values.length : 0;
+
+  this.data = { 'hash': nativeCreate(null), 'set': new Set };
+  while (length--) {
+    this.push(values[length]);
+  }
+}
+
+/**
+ * Adds `value` to the cache.
+ *
+ * @private
+ * @name push
+ * @memberOf SetCache
+ * @param {*} value The value to cache.
+ */
+function cachePush(value) {
+  var data = this.data;
+  if (typeof value == 'string' || isObject(value)) {
+    data.set.add(value);
+  } else {
+    data.hash[value] = true;
+  }
+}
+
+/**
+ * Creates a `Set` cache object to optimize linear searches of large arrays.
+ *
+ * @private
+ * @param {Array} [values] The values to cache.
+ * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
+ */
+var createCache = !(nativeCreate && Set) ? constant(null) : function(values) {
+  return new SetCache(values);
+};
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(1);
+ * // => false
+ */
+function isObject(value) {
+  // Avoid a V8 JIT bug in Chrome 19-20.
+  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Creates a function that returns `value`.
+ *
+ * @static
+ * @memberOf _
+ * @category Utility
+ * @param {*} value The value to return from the new function.
+ * @returns {Function} Returns the new function.
+ * @example
+ *
+ * var object = { 'user': 'fred' };
+ * var getter = _.constant(object);
+ *
+ * getter() === object;
+ * // => true
+ */
+function constant(value) {
+  return function() {
+    return value;
+  };
+}
+
+// Add functions to the `Set` cache.
+SetCache.prototype.push = cachePush;
+
+module.exports = createCache;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"lodash._getnative":68}],68:[function(require,module,exports){
+arguments[4][34][0].apply(exports,arguments)
+},{"dup":34}],69:[function(require,module,exports){
+/**
+ * lodash 3.1.3 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var isArguments = require('lodash.isarguments'),
+    isArray = require('lodash.isarray');
+
+/**
+ * Checks if `value` is object-like.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+ */
+function isObjectLike(value) {
+  return !!value && typeof value == 'object';
+}
+
+/**
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
+ */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/**
+ * The base implementation of `_.flatten` with added support for restricting
+ * flattening and specifying the start index.
+ *
+ * @private
+ * @param {Array} array The array to flatten.
+ * @param {boolean} [isDeep] Specify a deep flatten.
+ * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+ * @returns {Array} Returns the new flattened array.
+ */
+function baseFlatten(array, isDeep, isStrict) {
+  var index = -1,
+      length = array.length,
+      resIndex = -1,
+      result = [];
+
+  while (++index < length) {
+    var value = array[index];
+    if (isObjectLike(value) && isArrayLike(value) &&
+        (isStrict || isArray(value) || isArguments(value))) {
+      if (isDeep) {
+        // Recursively flatten arrays (susceptible to call stack limits).
+        value = baseFlatten(value, isDeep, isStrict);
+      }
+      var valIndex = -1,
+          valLength = value.length;
+
+      while (++valIndex < valLength) {
+        result[++resIndex] = value[valIndex];
+      }
+    } else if (!isStrict) {
+      result[++resIndex] = value;
+    }
+  }
+  return result;
+}
+
+/**
+ * The base implementation of `_.property` without support for deep paths.
+ *
+ * @private
+ * @param {string} key The key of the property to get.
+ * @returns {Function} Returns the new function.
+ */
+function baseProperty(key) {
+  return function(object) {
+    return object == null ? undefined : object[key];
+  };
+}
+
+/**
+ * Gets the "length" property value of `object`.
+ *
+ * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+ * that affects Safari on at least iOS 8.1-8.3 ARM64.
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @returns {*} Returns the "length" value.
+ */
+var getLength = baseProperty('length');
+
+/**
+ * Checks if `value` is array-like.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+ */
+function isArrayLike(value) {
+  return value != null && isLength(getLength(value));
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ */
+function isLength(value) {
+  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+module.exports = baseFlatten;
+
+},{"lodash.isarguments":70,"lodash.isarray":71}],70:[function(require,module,exports){
+arguments[4][35][0].apply(exports,arguments)
+},{"dup":35}],71:[function(require,module,exports){
+arguments[4][32][0].apply(exports,arguments)
+},{"dup":32}],72:[function(require,module,exports){
+arguments[4][28][0].apply(exports,arguments)
+},{"dup":28}],73:[function(require,module,exports){
+/**
+ * lodash 3.0.2 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * A specialized version of `_.pick` which picks `object` properties specified
+ * by `props`.
+ *
+ * @private
+ * @param {Object} object The source object.
+ * @param {string[]} props The property names to pick.
+ * @returns {Object} Returns the new object.
+ */
+function pickByArray(object, props) {
+  object = toObject(object);
+
+  var index = -1,
+      length = props.length,
+      result = {};
+
+  while (++index < length) {
+    var key = props[index];
+    if (key in object) {
+      result[key] = object[key];
+    }
+  }
+  return result;
+}
+
+/**
+ * Converts `value` to an object if it's not one.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {Object} Returns the object.
+ */
+function toObject(value) {
+  return isObject(value) ? value : Object(value);
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(1);
+ * // => false
+ */
+function isObject(value) {
+  // Avoid a V8 JIT bug in Chrome 19-20.
+  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+module.exports = pickByArray;
+
+},{}],74:[function(require,module,exports){
+/**
+ * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var baseFor = require('lodash._basefor'),
+    keysIn = require('lodash.keysin');
+
+/**
+ * The base implementation of `_.forIn` without support for callback
+ * shorthands and `this` binding.
+ *
+ * @private
+ * @param {Object} object The object to iterate over.
+ * @param {Function} iteratee The function invoked per iteration.
+ * @returns {Object} Returns `object`.
+ */
+function baseForIn(object, iteratee) {
+  return baseFor(object, iteratee, keysIn);
+}
+
+/**
+ * A specialized version of `_.pick` that picks `object` properties `predicate`
+ * returns truthy for.
+ *
+ * @private
+ * @param {Object} object The source object.
+ * @param {Function} predicate The function invoked per iteration.
+ * @returns {Object} Returns the new object.
+ */
+function pickByCallback(object, predicate) {
+  var result = {};
+  baseForIn(object, function(value, key, object) {
+    if (predicate(value, key, object)) {
+      result[key] = value;
+    }
+  });
+  return result;
+}
+
+module.exports = pickByCallback;
+
+},{"lodash._basefor":75,"lodash.keysin":76}],75:[function(require,module,exports){
+arguments[4][57][0].apply(exports,arguments)
+},{"dup":57}],76:[function(require,module,exports){
+/**
+ * lodash 3.0.8 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var isArguments = require('lodash.isarguments'),
+    isArray = require('lodash.isarray');
+
+/** Used to detect unsigned integer values. */
+var reIsUint = /^\d+$/;
+
+/** Used for native method references. */
+var objectProto = Object.prototype;
+
+/** Used to check objects for own properties. */
+var hasOwnProperty = objectProto.hasOwnProperty;
+
+/**
+ * Used as the [maximum length](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.max_safe_integer)
+ * of an array-like value.
+ */
+var MAX_SAFE_INTEGER = 9007199254740991;
+
+/**
+ * Checks if `value` is a valid array-like index.
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+ * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+ */
+function isIndex(value, length) {
+  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
+  length = length == null ? MAX_SAFE_INTEGER : length;
+  return value > -1 && value % 1 == 0 && value < length;
+}
+
+/**
+ * Checks if `value` is a valid array-like length.
+ *
+ * **Note:** This function is based on [`ToLength`](https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength).
+ *
+ * @private
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+ */
+function isLength(value) {
+  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+}
+
+/**
+ * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+ * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+ *
+ * @static
+ * @memberOf _
+ * @category Lang
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ * @example
+ *
+ * _.isObject({});
+ * // => true
+ *
+ * _.isObject([1, 2, 3]);
+ * // => true
+ *
+ * _.isObject(1);
+ * // => false
+ */
+function isObject(value) {
+  // Avoid a V8 JIT bug in Chrome 19-20.
+  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+  var type = typeof value;
+  return !!value && (type == 'object' || type == 'function');
+}
+
+/**
+ * Creates an array of the own and inherited enumerable property names of `object`.
+ *
+ * **Note:** Non-object values are coerced to objects.
+ *
+ * @static
+ * @memberOf _
+ * @category Object
+ * @param {Object} object The object to query.
+ * @returns {Array} Returns the array of property names.
+ * @example
+ *
+ * function Foo() {
+ *   this.a = 1;
+ *   this.b = 2;
+ * }
+ *
+ * Foo.prototype.c = 3;
+ *
+ * _.keysIn(new Foo);
+ * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
+ */
+function keysIn(object) {
+  if (object == null) {
+    return [];
+  }
+  if (!isObject(object)) {
+    object = Object(object);
+  }
+  var length = object.length;
+  length = (length && isLength(length) &&
+    (isArray(object) || isArguments(object)) && length) || 0;
+
+  var Ctor = object.constructor,
+      index = -1,
+      isProto = typeof Ctor == 'function' && Ctor.prototype === object,
+      result = Array(length),
+      skipIndexes = length > 0;
+
+  while (++index < length) {
+    result[index] = (index + '');
+  }
+  for (var key in object) {
+    if (!(skipIndexes && isIndex(key, length)) &&
+        !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+      result.push(key);
+    }
+  }
+  return result;
+}
+
+module.exports = keysIn;
+
+},{"lodash.isarguments":77,"lodash.isarray":78}],77:[function(require,module,exports){
+arguments[4][35][0].apply(exports,arguments)
+},{"dup":35}],78:[function(require,module,exports){
+arguments[4][32][0].apply(exports,arguments)
+},{"dup":32}],79:[function(require,module,exports){
+/**
+ * lodash 3.6.1 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/** Used as the `TypeError` message for "Functions" methods. */
+var FUNC_ERROR_TEXT = 'Expected a function';
+
+/* Native method references for those with the same name as other `lodash` methods. */
+var nativeMax = Math.max;
+
+/**
+ * Creates a function that invokes `func` with the `this` binding of the
+ * created function and arguments from `start` and beyond provided as an array.
+ *
+ * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters).
+ *
+ * @static
+ * @memberOf _
+ * @category Function
+ * @param {Function} func The function to apply a rest parameter to.
+ * @param {number} [start=func.length-1] The start position of the rest parameter.
+ * @returns {Function} Returns the new function.
+ * @example
+ *
+ * var say = _.restParam(function(what, names) {
+ *   return what + ' ' + _.initial(names).join(', ') +
+ *     (_.size(names) > 1 ? ', & ' : '') + _.last(names);
+ * });
+ *
+ * say('hello', 'fred', 'barney', 'pebbles');
+ * // => 'hello fred, barney, & pebbles'
+ */
+function restParam(func, start) {
+  if (typeof func != 'function') {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
+  return function() {
+    var args = arguments,
+        index = -1,
+        length = nativeMax(args.length - start, 0),
+        rest = Array(length);
+
+    while (++index < length) {
+      rest[index] = args[start + index];
+    }
+    switch (start) {
+      case 0: return func.call(this, rest);
+      case 1: return func.call(this, args[0], rest);
+      case 2: return func.call(this, args[0], args[1], rest);
+    }
+    var otherArgs = Array(start + 1);
+    index = -1;
+    while (++index < start) {
+      otherArgs[index] = args[index];
+    }
+    otherArgs[start] = rest;
+    return func.apply(this, otherArgs);
+  };
+}
+
+module.exports = restParam;
+
+},{}],80:[function(require,module,exports){
+(function (global){
+/**
+ * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+var baseToString = require('lodash._basetostring');
+
+/** Native method references. */
+var floor = Math.floor;
+
+/* Native method references for those with the same name as other `lodash` methods. */
+var nativeIsFinite = global.isFinite;
+
+/**
+ * Repeats the given string `n` times.
+ *
+ * @static
+ * @memberOf _
+ * @category String
+ * @param {string} [string=''] The string to repeat.
+ * @param {number} [n=0] The number of times to repeat the string.
+ * @returns {string} Returns the repeated string.
+ * @example
+ *
+ * _.repeat('*', 3);
+ * // => '***'
+ *
+ * _.repeat('abc', 2);
+ * // => 'abcabc'
+ *
+ * _.repeat('abc', 0);
+ * // => ''
+ */
+function repeat(string, n) {
+  var result = '';
+  string = baseToString(string);
+  n = +n;
+  if (n < 1 || !string || !nativeIsFinite(n)) {
+    return result;
+  }
+  // Leverage the exponentiation by squaring algorithm for a faster repeat.
+  // See https://en.wikipedia.org/wiki/Exponentiation_by_squaring for more details.
+  do {
+    if (n % 2) {
+      result += string;
+    }
+    n = floor(n / 2);
+    string += string;
+  } while (n);
+
+  return result;
+}
+
+module.exports = repeat;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"lodash._basetostring":81}],81:[function(require,module,exports){
+/**
+ * lodash 3.0.0 (Custom Build) <https://lodash.com/>
+ * Build: `lodash modern modularize exports="npm" -o ./`
+ * Copyright 2012-2015 The Dojo Foundation <http://dojofoundation.org/>
+ * Based on Underscore.js 1.7.0 <http://underscorejs.org/LICENSE>
+ * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ * Available under MIT license <https://lodash.com/license>
+ */
+
+/**
+ * Converts `value` to a string if it is not one. An empty string is returned
+ * for `null` or `undefined` values.
+ *
+ * @private
+ * @param {*} value The value to process.
+ * @returns {string} Returns the string.
+ */
+function baseToString(value) {
+  if (typeof value == 'string') {
+    return value;
+  }
+  return value == null ? '' : (value + '');
+}
+
+module.exports = baseToString;
+
+},{}],82:[function(require,module,exports){
 var getSvgCoord;
 
 getSvgCoord = require('./svg-coord').get;
@@ -4444,7 +7763,7 @@ module.exports = function(coord, format) {
 };
 
 
-},{"./svg-coord":36}],25:[function(require,module,exports){
+},{"./svg-coord":95}],83:[function(require,module,exports){
 var ABS_COMMAND, DrillParser, INCH_COMMAND, INC_COMMAND, METRIC_COMMAND, PLACES_BACKUP, Parser, ZERO_BACKUP, getSvgCoord, parseCoord, reCOORD,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
@@ -4569,7 +7888,7 @@ DrillParser = (function(superClass) {
 module.exports = DrillParser;
 
 
-},{"./coord-parser":24,"./parser":33,"./svg-coord":36}],26:[function(require,module,exports){
+},{"./coord-parser":82,"./parser":92,"./svg-coord":95}],84:[function(require,module,exports){
 var DrillReader;
 
 DrillReader = (function() {
@@ -4593,16 +7912,25 @@ DrillReader = (function() {
 module.exports = DrillReader;
 
 
-},{}],27:[function(require,module,exports){
-var GerberParser, Parser, getSvgCoord, parseCoord, reCOORD, reINT, reOP, reTOOL,
+},{}],85:[function(require,module,exports){
+var GerberParser, Parser, Warning, getSvgCoord, isError, parseCoord, reCOORD, reINT, reOP, reTOOL, svgCoord, svgCoordFactor,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-  hasProp = {}.hasOwnProperty;
+  hasProp = {}.hasOwnProperty,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+isError = require('lodash.iserror');
 
 Parser = require('./parser');
 
+Warning = require('./warning');
+
 parseCoord = require('./coord-parser');
 
-getSvgCoord = require('./svg-coord').get;
+svgCoord = require('./svg-coord');
+
+getSvgCoord = svgCoord.get;
+
+svgCoordFactor = svgCoord.factor;
 
 reCOORD = /([XYIJ][+-]?\d+){1,4}/g;
 
@@ -4619,152 +7947,180 @@ GerberParser = (function(superClass) {
     return GerberParser.__super__.constructor.apply(this, arguments);
   }
 
-  GerberParser.prototype.parseBlock = function(block, line) {
-    var axis, coord, coordMatch, intMode, mode, modeOp, op, opType, ref, ref1, val;
+  GerberParser.prototype.parseBlock = function(block, line, done) {
+    var axis, coord, coordMatch, intMode, mode, op, opType, ref, ref1, res, val;
     if (/^G0*4/.test(block)) {
-      return null;
-    }
-    if (block === 'M02') {
-      return {
+      return done();
+    } else if (block === 'M02') {
+      this.push({
         set: {
           done: true
-        }
-      };
-    }
-    if (reTOOL.test(block)) {
-      return this.parseToolChange(block, line);
-    }
-    if (block === 'G36') {
-      return {
+        },
+        line: line
+      });
+    } else if (reTOOL.test(block)) {
+      res = this.parseToolChange(block, line);
+      if (isError(res)) {
+        return done(res);
+      } else if (res != null) {
+        this.push(res);
+      }
+    } else if (block === 'G36') {
+      this.push({
         set: {
           region: true
-        }
-      };
-    }
-    if (block === 'G37') {
-      return {
+        },
+        line: line
+      });
+    } else if (block === 'G37') {
+      this.push({
         set: {
           region: false
-        }
-      };
-    }
-    if (block === 'G70') {
-      return {
+        },
+        line: line
+      });
+    } else if (block === 'G70') {
+      this.push({
         set: {
           backupUnits: 'in'
-        }
-      };
-    }
-    if (block === 'G71') {
-      return {
+        },
+        line: line
+      });
+    } else if (block === 'G71') {
+      this.push({
         set: {
           backupUnits: 'mm'
-        }
-      };
-    }
-    if (block === 'G74') {
-      return {
+        },
+        line: line
+      });
+    } else if (block === 'G74') {
+      this.push({
         set: {
           quad: 's'
-        }
-      };
-    }
-    if (block === 'G75') {
-      return {
+        },
+        line: line
+      });
+    } else if (block === 'G75') {
+      this.push({
         set: {
           quad: 'm'
+        },
+        line: line
+      });
+    } else {
+      if (intMode = block.match(reINT)) {
+        switch (intMode[0].slice(-1)) {
+          case '1':
+            mode = 'i';
+            break;
+          case '2':
+            mode = 'cw';
+            break;
+          case '3':
+            mode = 'ccw';
         }
-      };
-    }
-    modeOp = null;
-    if (intMode = block.match(reINT)) {
-      switch (intMode[0].slice(-1)) {
-        case '1':
-          mode = 'i';
-          break;
-        case '2':
-          mode = 'cw';
-          break;
-        case '3':
-          mode = 'ccw';
+        this.push({
+          set: {
+            mode: mode
+          },
+          line: line
+        });
       }
-      modeOp = {
-        set: {
-          mode: mode
+      coordMatch = (ref = block.match(reCOORD)) != null ? ref[0] : void 0;
+      if ((opType = block.match(reOP)) || (coordMatch != null)) {
+        op = {};
+        coord = parseCoord(coordMatch, this.format);
+        for (axis in coord) {
+          val = coord[axis];
+          op[axis] = val;
         }
-      };
-    }
-    coordMatch = (ref = block.match(reCOORD)) != null ? ref[0] : void 0;
-    if ((opType = block.match(reOP)) || (coordMatch != null)) {
-      op = {};
-      coord = parseCoord(coordMatch, this.format);
-      for (axis in coord) {
-        val = coord[axis];
-        op[axis] = val;
-      }
-      switch (opType != null ? (ref1 = opType[0]) != null ? ref1.slice(-1) : void 0 : void 0) {
-        case '1':
-          op["do"] = 'int';
-          break;
-        case '2':
-          op["do"] = 'move';
-          break;
-        case '3':
-          op["do"] = 'flash';
-          break;
-        default:
-          op["do"] = 'last';
-      }
-      if (modeOp != null) {
-        modeOp.op = op;
-      } else {
-        modeOp = {
-          op: op
-        };
+        switch (opType != null ? (ref1 = opType[0]) != null ? ref1.slice(-1) : void 0 : void 0) {
+          case '1':
+            op["do"] = 'int';
+            break;
+          case '2':
+            op["do"] = 'move';
+            break;
+          case '3':
+            op["do"] = 'flash';
+            break;
+          default:
+            op["do"] = 'last';
+        }
+        this.push({
+          op: op,
+          line: line
+        });
       }
     }
-    return modeOp;
+    return done();
   };
 
-  GerberParser.prototype.parseParam = function(param, line) {
-    var code, macro;
+  GerberParser.prototype.parseParam = function(param, line, done) {
+    var code, macro, nextBlock, res;
     if (param === false) {
-      macro = {};
-      macro[this.macroName] = this.macroBlocks;
-      this.macroName = '';
-      return {
-        macro: macro
-      };
+      if (this.macroName) {
+        macro = {};
+        macro[this.macroName] = this.macroBlocks;
+        this.macroName = '';
+        this.push({
+          macro: macro
+        });
+      }
+      return done();
     }
     code = param.slice(0, 2);
     if (code === 'FS') {
-      return this.parseFormat(param, line);
-    }
-    if (code === 'MO') {
-      return this.parseUnits(param, line);
-    }
-    if (code === 'AD') {
-      return this.parseToolDef(param, line);
-    }
-    if (code === 'AM') {
+      res = this.parseFormat(param, line);
+      if (isError(res)) {
+        return done(res);
+      } else if (res != null) {
+        this.push(res);
+      }
+    } else if (code === 'MO') {
+      res = this.parseUnits(param, line);
+      if (isError(res)) {
+        return done(res);
+      } else if (res != null) {
+        this.push(res);
+      }
+    } else if (code === 'AD') {
+      res = this.parseToolDef(param, line);
+      if (isError(res)) {
+        return done(res);
+      } else if (res != null) {
+        this.push(res);
+      }
+    } else if (code === 'AM') {
       this.macroName = param.slice(2);
       this.macroBlocks = [];
-      return null;
+      return done();
+    } else if (this.macroName) {
+      nextBlock = this.parseMacroBlock(param, line);
+      if (nextBlock != null) {
+        this.macroBlocks.push(nextBlock);
+      }
+      return done();
+    } else if (code === 'LP') {
+      res = this.parsePolarity(param, line);
+      if (isError(res)) {
+        return done(res);
+      } else if (res != null) {
+        this.push(res);
+      }
+    } else if (code === 'SR') {
+      res = this.parseStepRepeat(param, line);
+      if (isError(res)) {
+        return done(res);
+      } else if (res != null) {
+        this.push(res);
+      }
     }
-    if (this.macroName) {
-      this.macroBlocks.push(param);
-      return null;
-    }
-    if (code === 'LP') {
-      return this.parsePolarity(param, line);
-    }
-    if (code === 'SR') {
-      return this.parseStepRepeat(param, line);
-    }
+    return done();
   };
 
   GerberParser.prototype.parseFormat = function(p, l) {
-    var base, base1, nota, x, y, zero;
+    var base, base1, epsilon, nota, x, y, zero;
     zero = p[2] === 'L' || p[2] === 'T' ? p[2] : null;
     nota = p[3] === 'A' || p[3] === 'I' ? p[3] : null;
     if (p[4] === 'X') {
@@ -4791,10 +8147,13 @@ GerberParser = (function(superClass) {
     if ((base1 = this.format).places == null) {
       base1.places = x;
     }
+    epsilon = 1.5 * svgCoordFactor * Math.pow(10, -this.format.places[1]);
     return {
       set: {
-        notation: nota
-      }
+        notation: nota,
+        epsilon: epsilon
+      },
+      line: l
     };
   };
 
@@ -4811,12 +8170,13 @@ GerberParser = (function(superClass) {
     return {
       set: {
         units: units
-      }
+      },
+      line: l
     };
   };
 
   GerberParser.prototype.parseToolDef = function(p, l) {
-    var code, hole, m, mods, ref, ref1, shape, tool;
+    var code, dia, height, hole, m, mods, ref, ref1, shape, tool, vertices, width;
     tool = {};
     code = (ref = p.match(/^ADD\d{2,}/)) != null ? ref[0].slice(2) : void 0;
     ref1 = p.slice(2 + code.length).split(','), shape = ref1[0], mods = ref1[1];
@@ -4827,6 +8187,9 @@ GerberParser = (function(superClass) {
     tool[code] = {};
     switch (shape) {
       case 'C':
+        dia = getSvgCoord(mods[0], {
+          places: this.format.places
+        });
         if (mods.length > 2) {
           hole = {
             width: getSvgCoord(mods[1], {
@@ -4836,22 +8199,32 @@ GerberParser = (function(superClass) {
               places: this.format.places
             })
           };
+          if (Math.pow((Math.pow(hole.width, 2)) + (Math.pow(hole.height, 2)), 0.5) > dia) {
+            return new Error(code + " hole cannot be larger than the shape");
+          }
         } else if (mods.length > 1) {
           hole = {
             dia: getSvgCoord(mods[1], {
               places: this.format.places
             })
           };
+          if (hole.dia > dia) {
+            return new Error(code + " hole cannot be larger than the shape");
+          }
         }
-        tool[code].dia = getSvgCoord(mods[0], {
-          places: this.format.places
-        });
+        tool[code].dia = dia;
         if (hole != null) {
           tool[code].hole = hole;
         }
         break;
       case 'R':
       case 'O':
+        width = getSvgCoord(mods[0], {
+          places: this.format.places
+        });
+        height = getSvgCoord(mods[1], {
+          places: this.format.places
+        });
         if (mods.length > 3) {
           hole = {
             width: getSvgCoord(mods[2], {
@@ -4861,19 +8234,21 @@ GerberParser = (function(superClass) {
               places: this.format.places
             })
           };
+          if ((hole.width > width) || (hole.height > height)) {
+            return new Error(code + " hole cannot be larger than the shape");
+          }
         } else if (mods.length > 2) {
           hole = {
             dia: getSvgCoord(mods[2], {
               places: this.format.places
             })
           };
+          if ((hole.dia > width) || (hole.dia > height)) {
+            return new Error(code + " hole cannot be larger than the shape");
+          }
         }
-        tool[code].width = getSvgCoord(mods[0], {
-          places: this.format.places
-        });
-        tool[code].height = getSvgCoord(mods[1], {
-          places: this.format.places
-        });
+        tool[code].width = width;
+        tool[code].height = height;
         if (shape === 'O') {
           tool[code].obround = true;
         }
@@ -4882,6 +8257,10 @@ GerberParser = (function(superClass) {
         }
         break;
       case 'P':
+        vertices = Number(mods[1]);
+        dia = getSvgCoord(mods[0], {
+          places: this.format.places
+        });
         if (mods.length > 4) {
           hole = {
             width: getSvgCoord(mods[3], {
@@ -4891,17 +8270,21 @@ GerberParser = (function(superClass) {
               places: this.format.places
             })
           };
+          if (Math.pow((Math.pow(hole.width, 2)) + (Math.pow(hole.height, 2)), 0.5) > dia) {
+            return new Error(code + " hole cannot be larger than the shape");
+          }
         } else if (mods.length > 3) {
           hole = {
             dia: getSvgCoord(mods[3], {
               places: this.format.places
             })
           };
+          if (hole.dia > dia * Math.cos(Math.PI / vertices)) {
+            return new Error(code + " hole cannot be larger than the shape");
+          }
         }
-        tool[code].dia = getSvgCoord(mods[0], {
-          places: this.format.places
-        });
-        tool[code].vertices = Number(mods[1]);
+        tool[code].dia = dia;
+        tool[code].vertices = vertices;
         if (mods.length > 2) {
           tool[code].degrees = Number(mods[2]);
         }
@@ -4923,8 +8306,27 @@ GerberParser = (function(superClass) {
         tool[code].macro = shape;
         tool[code].mods = mods;
     }
+    if (dia < 0) {
+      return new RangeError(code + " diameter cannot be negative");
+    }
+    if (width < 0) {
+      return new RangeError(code + " width cannot be negative");
+    }
+    if (height < 0) {
+      return new RangeError(code + " height cannot be negative");
+    }
+    if (vertices < 3 || vertices > 12) {
+      return new RangeError(code + " polygon vertices must be between 3 and 12");
+    }
+    if ((hole != null ? hole.dia : void 0) < 0 || (hole != null ? hole.width : void 0) < 0 || (hole != null ? hole.height : void 0) < 0) {
+      return new RangeError(code + " hole dimensions cannot be negative");
+    }
+    if (width === 0 || height === 0 || ((vertices != null) && dia === 0)) {
+      this.emit('warning', new Warning(code + " zero-size shapes (except circles) are not technically allowed"));
+    }
     return {
-      tool: tool
+      tool: tool,
+      line: l
     };
   };
 
@@ -4933,7 +8335,8 @@ GerberParser = (function(superClass) {
       return {
         "new": {
           layer: p[2]
-        }
+        },
+        line: l
       };
     } else {
       return new Error("line " + l + " - level polarity must be 'D' or 'C'");
@@ -4975,7 +8378,8 @@ GerberParser = (function(superClass) {
     return {
       "new": {
         sr: sr
-      }
+      },
+      line: l
     };
   };
 
@@ -4988,8 +8392,110 @@ GerberParser = (function(superClass) {
     return {
       set: {
         currentTool: code
-      }
+      },
+      line: l
     };
+  };
+
+  GerberParser.prototype.parseMacroBlock = function(b, l) {
+    var code, exp, modifier, mods, primitive, ref, rot, value;
+    if (indexOf.call(b, '=') >= 0) {
+      ref = b.split('='), modifier = ref[0], value = ref[1];
+      if (indexOf.call(value, 'X') >= 0) {
+        this.emit('warning', new Warning("line " + l + " - macros should use lowercase 'x' for multiplication"));
+        value = value.replace(/X/g, 'x');
+      }
+      return {
+        modifier: modifier,
+        value: value
+      };
+    }
+    mods = b.split(',');
+    code = mods[0];
+    exp = mods[1];
+    if (code !== '1') {
+      rot = mods[mods.length - 1];
+    }
+    primitive = (function() {
+      switch (code) {
+        case '1':
+          return {
+            shape: 'circle',
+            dia: mods[2],
+            cx: mods[3],
+            cy: mods[4]
+          };
+        case '2':
+        case '20':
+          return {
+            shape: 'vector',
+            width: mods[2],
+            x1: mods[3],
+            y1: mods[4],
+            x2: mods[5],
+            y2: mods[6]
+          };
+        case '21':
+          return {
+            shape: 'rect',
+            width: mods[2],
+            height: mods[3],
+            cx: mods[4],
+            cy: mods[5]
+          };
+        case '22':
+          return {
+            shape: 'lowerLeftRect',
+            width: mods[2],
+            height: mods[3],
+            x: mods[4],
+            y: mods[5]
+          };
+        case '4':
+          return {
+            shape: 'outline',
+            points: mods.slice(3, -1)
+          };
+        case '5':
+          return {
+            shape: 'polygon',
+            vertices: mods[2],
+            cx: mods[3],
+            cy: mods[4],
+            dia: mods[5]
+          };
+        case '6':
+          return {
+            shape: 'moire',
+            cx: mods[2],
+            cy: mods[3],
+            outerDia: mods[4],
+            ringThx: mods[5],
+            ringGap: mods[6],
+            maxRings: mods[7],
+            crossThx: mods[8],
+            crossLength: mods[9]
+          };
+        case '7':
+          return {
+            shape: 'thermal',
+            cx: mods[2],
+            cy: mods[3],
+            outerDia: mods[4],
+            innerDia: mods[5],
+            gap: mods[6]
+          };
+        default:
+          return null;
+      }
+    })();
+    if (primitive != null) {
+      primitive.exp = exp;
+      if (rot != null) {
+        primitive.rot = rot;
+      }
+    }
+    return primitive;
   };
 
   return GerberParser;
@@ -4999,7 +8505,7 @@ GerberParser = (function(superClass) {
 module.exports = GerberParser;
 
 
-},{"./coord-parser":24,"./parser":33,"./svg-coord":36}],28:[function(require,module,exports){
+},{"./coord-parser":82,"./parser":92,"./svg-coord":95,"./warning":97,"lodash.iserror":49}],86:[function(require,module,exports){
 var GerberReader;
 
 GerberReader = (function() {
@@ -5059,7 +8565,154 @@ GerberReader = (function() {
 module.exports = GerberReader;
 
 
-},{}],29:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
+(function (global){
+var DEFAULT_OPTS, DrillParser, DrillReader, GerberParser, GerberReader, Plotter, builder, coordFactor;
+
+builder = require('./obj-to-xml');
+
+Plotter = require('./plotter');
+
+DrillReader = require('./drill-reader');
+
+DrillParser = require('./drill-parser');
+
+GerberReader = require('./gerber-reader');
+
+GerberParser = require('./gerber-parser');
+
+coordFactor = require('./svg-coord').factor;
+
+DEFAULT_OPTS = {
+  drill: false,
+  pretty: false,
+  object: false,
+  warnArr: null,
+  places: null,
+  zero: null,
+  notation: null,
+  units: null
+};
+
+module.exports = function(file, options) {
+  var a, error, height, key, oldWarn, opts, p, parser, parserOpts, plotterOpts, reader, ref, root, val, width, xml, xmlObject;
+  if (options == null) {
+    options = {};
+  }
+  opts = {};
+  for (key in DEFAULT_OPTS) {
+    val = DEFAULT_OPTS[key];
+    opts[key] = val;
+  }
+  for (key in options) {
+    val = options[key];
+    opts[key] = val;
+  }
+  if (typeof file === 'object') {
+    if (file.svg != null) {
+      return builder(file, {
+        pretty: opts.pretty
+      });
+    } else {
+      throw new Error('non SVG object cannot be converted to an SVG string');
+    }
+  }
+  parserOpts = null;
+  if ((opts.places != null) || (opts.zero != null)) {
+    parserOpts = {
+      places: opts.places,
+      zero: opts.zero
+    };
+  }
+  if (opts.drill) {
+    reader = new DrillReader(file);
+    parser = new DrillParser(parserOpts);
+  } else {
+    reader = new GerberReader(file);
+    parser = new GerberParser(parserOpts);
+  }
+  plotterOpts = null;
+  if ((opts.notation != null) || (opts.units != null)) {
+    plotterOpts = {
+      notation: opts.notation,
+      units: opts.units
+    };
+  }
+  p = new Plotter(reader, parser, plotterOpts);
+  oldWarn = null;
+  root = null;
+  if (Array.isArray(opts.warnArr)) {
+    root = typeof window !== "undefined" && window !== null ? window : global;
+    if (root.console == null) {
+      root.console = {};
+    }
+    oldWarn = root.console.warn;
+    root.console.warn = function(chunk) {
+      return opts.warnArr.push(chunk.toString());
+    };
+  }
+  try {
+    xmlObject = p.plot();
+  } catch (_error) {
+    error = _error;
+    throw new Error("Error at line " + p.reader.line + " - " + error.message);
+  } finally {
+    if ((oldWarn != null) && (root != null)) {
+      root.console.warn = oldWarn;
+    }
+  }
+  if (!(p.bbox.xMin >= p.bbox.xMax)) {
+    width = p.bbox.xMax - p.bbox.xMin;
+  } else {
+    p.bbox.xMin = 0;
+    p.bbox.xMax = 0;
+    width = 0;
+  }
+  if (!(p.bbox.yMin >= p.bbox.yMax)) {
+    height = p.bbox.yMax - p.bbox.yMin;
+  } else {
+    p.bbox.yMin = 0;
+    p.bbox.yMax = 0;
+    height = 0;
+  }
+  xml = {
+    svg: {
+      xmlns: 'http://www.w3.org/2000/svg',
+      version: '1.1',
+      'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+      width: "" + (width / coordFactor) + p.units,
+      height: "" + (height / coordFactor) + p.units,
+      viewBox: [p.bbox.xMin, p.bbox.yMin, width, height],
+      _: []
+    }
+  };
+  ref = p.attr;
+  for (a in ref) {
+    val = ref[a];
+    xml.svg[a] = val;
+  }
+  if (p.defs.length) {
+    xml.svg._.push({
+      defs: {
+        _: p.defs
+      }
+    });
+  }
+  if (p.group.g._.length) {
+    xml.svg._.push(p.group);
+  }
+  if (!opts.object) {
+    return builder(xml, {
+      pretty: opts.pretty
+    });
+  } else {
+    return xml;
+  }
+};
+
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./drill-parser":83,"./drill-reader":84,"./gerber-parser":85,"./gerber-reader":86,"./obj-to-xml":90,"./plotter":93,"./svg-coord":95}],88:[function(require,module,exports){
 var NUMBER, OPERATOR, TOKEN, isNumber, parse, tokenize;
 
 OPERATOR = /[\+\-\/xX\(\)]/;
@@ -5085,9 +8738,7 @@ parse = function(arith) {
     return tokens[index];
   };
   consume = function(t) {
-    if (t === peek()) {
-      return index++;
-    }
+    return index++;
   };
   parsePrimary = function() {
     var exp, t;
@@ -5101,12 +8752,12 @@ parse = function(arith) {
     } else if (t === '(') {
       exp = parseExpression();
       if (peek() !== ')') {
-        throw new Error("expected ')'");
+        throw new Error('unmatched parentheses while parsing a macro expression');
       } else {
         consume(')');
       }
     } else {
-      throw new Error(t + " is unexpected in an arithmetic string");
+      throw new Error(arith + " is a poorly formatted expression");
     }
     return exp;
   };
@@ -5114,12 +8765,8 @@ parse = function(arith) {
     var exp, rhs, t;
     exp = parsePrimary();
     t = peek();
-    while (t === 'x' || t === '/' || t === 'X') {
+    while (t === 'x' || t === '/') {
       consume(t);
-      if (t === 'X') {
-        console.warn("Warning: uppercase 'X' as multiplication symbol is incorrect; macros should use lowercase 'x' to multiply");
-        t = 'x';
-      }
       rhs = parsePrimary();
       exp = {
         type: t,
@@ -5156,8 +8803,20 @@ module.exports = {
 };
 
 
-},{}],30:[function(require,module,exports){
-var MacroTool, calc, getSvgCoord, shapes, unique;
+},{}],89:[function(require,module,exports){
+var EventEmitter, MacroTool, Warning, calc, filter, find, getSvgCoord, mapValues, omit, shapes, unique,
+  extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  hasProp = {}.hasOwnProperty;
+
+EventEmitter = require('events').EventEmitter;
+
+mapValues = require('lodash.mapvalues');
+
+find = require('lodash.find');
+
+filter = require('lodash.filter');
+
+omit = require('lodash.omit');
 
 shapes = require('./pad-shapes');
 
@@ -5167,29 +8826,32 @@ unique = require('./unique-id');
 
 getSvgCoord = require('./svg-coord').get;
 
-MacroTool = (function() {
+Warning = require('./warning');
+
+MacroTool = (function(superClass) {
+  extend(MacroTool, superClass);
+
   function MacroTool(blocks, numberFormat) {
+    this.blocks = blocks != null ? blocks : [];
     this.modifiers = {};
-    this.name = blocks[0].slice(2);
-    this.blocks = blocks.slice(1);
     this.shapes = [];
     this.masks = [];
     this.lastExposure = null;
-    this.bbox = [null, null, null, null];
+    this.bbox = [Infinity, Infinity, -Infinity, -Infinity];
     this.format = {
       places: numberFormat
     };
   }
 
   MacroTool.prototype.run = function(tool, modifiers) {
-    var b, group, i, j, k, l, len, len1, len2, len3, m, n, pad, padId, ref, ref1, ref2, s, shape;
+    var b, i, j, k, l, len, len1, len2, m, pad, padId, ref, ref1, shape;
     if (modifiers == null) {
       modifiers = [];
     }
     this.lastExposure = null;
     this.shapes = [];
     this.masks = [];
-    this.bbox = [null, null, null, null];
+    this.bbox = [Infinity, Infinity, -Infinity, -Infinity];
     this.modifiers = {};
     for (i = j = 0, len = modifiers.length; j < len; i = ++j) {
       m = modifiers[i];
@@ -5198,229 +8860,175 @@ MacroTool = (function() {
     ref = this.blocks;
     for (k = 0, len1 = ref.length; k < len1; k++) {
       b = ref[k];
-      this.runBlock(b);
+      if (b.shape != null) {
+        this.primitive(b);
+      } else {
+        this.modifiers[b.modifier] = this.getNumber(b.value);
+      }
+    }
+    if (this.shapes.length === 1) {
+      pad = this.shapes;
+    } else if (this.shapes.length > 1) {
+      pad = [
+        {
+          g: {
+            _: this.shapes
+          }
+        }
+      ];
     }
     padId = "tool-" + tool + "-pad-" + (unique());
-    pad = [];
+    if (pad != null) {
+      shape = Object.keys(pad[0])[0];
+      pad[0][shape].id = padId;
+    }
     ref1 = this.masks;
     for (l = 0, len2 = ref1.length; l < len2; l++) {
       m = ref1[l];
-      pad.push(m);
-    }
-    if (this.shapes.length > 1) {
-      group = {
-        id: padId,
-        _: []
-      };
-      ref2 = this.shapes;
-      for (n = 0, len3 = ref2.length; n < len3; n++) {
-        s = ref2[n];
-        group._.push(s);
-      }
-      pad = [
-        {
-          g: group
-        }
-      ];
-    } else if (this.shapes.length === 1) {
-      shape = Object.keys(this.shapes[0])[0];
-      this.shapes[0][shape].id = padId;
-      pad.push(this.shapes[0]);
+      pad.unshift(m);
     }
     return {
-      pad: pad,
+      pad: pad != null ? pad : [],
       padId: padId,
       bbox: this.bbox,
       trace: false
     };
   };
 
-  MacroTool.prototype.runBlock = function(block) {
-    var a, args, i, j, len, mod, ref, val;
-    switch (block[0]) {
-      case '$':
-        mod = (ref = block.match(/^\$\d+(?=\=)/)) != null ? ref[0] : void 0;
-        val = block.slice(1 + mod.length);
-        return this.modifiers[mod] = this.getNumber(val);
-      case '1':
-      case '2':
-      case '20':
-      case '21':
-      case '22':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-        args = block.split(',');
-        for (i = j = 0, len = args.length; j < len; i = ++j) {
-          a = args[i];
-          args[i] = this.getNumber(a);
-        }
-        return this.primitive(args);
-      default:
-        if (block[0] !== '0') {
-          throw new Error("'" + block + "' unrecognized tool macro block");
-        }
-    }
-  };
-
-  MacroTool.prototype.primitive = function(args) {
-    var group, i, j, k, key, l, len, len1, len2, len3, len4, m, mask, maskId, n, o, points, q, ref, ref1, ref2, ref3, ref4, ref5, results, rot, rotation, s, shape;
+  MacroTool.prototype.primitive = function(p) {
+    var group, j, k, key, l, len, len1, len2, len3, lines, m, mask, maskId, maxRings, n, obj, rects, ref, ref1, results, rotation, s, shape, shapeType, thermalMask, vertices;
     mask = false;
     rotation = false;
-    shape = null;
-    switch (args[0]) {
-      case 1:
+    shapeType = p.shape;
+    mask = p.exp != null ? this.getNumber(p.exp) === 0 : void 0;
+    vertices = p.vertices != null ? this.getNumber(p.vertices, this.format) : void 0;
+    rotation = p.rot != null ? this.getNumber(p.rot) : void 0;
+    maxRings = p.maxRings != null ? this.getNumber(p.maxRings) : void 0;
+    p = mapValues(omit(p, ['shape', 'exp', 'rot', 'maxRings']), (function(_this) {
+      return function(value) {
+        var j, len, results, v;
+        if (Array.isArray(value)) {
+          value = _this.getNumber(value);
+          results = [];
+          for (j = 0, len = value.length; j < len; j++) {
+            v = value[j];
+            results.push(getSvgCoord(v, _this.format));
+          }
+          return results;
+        } else {
+          return getSvgCoord(_this.getNumber(value), _this.format);
+        }
+      };
+    })(this));
+    switch (shapeType) {
+      case 'circle':
         shape = shapes.circle({
-          dia: getSvgCoord(args[2], this.format),
-          cx: getSvgCoord(args[3], this.format),
-          cy: getSvgCoord(args[4], this.format)
+          dia: p.dia,
+          cx: p.cx,
+          cy: p.cy
         });
-        if (args[1] === 0) {
-          mask = true;
-        } else {
-          this.addBbox(shape.bbox);
-        }
         break;
-      case 2:
-      case 20:
+      case 'vector':
         shape = shapes.vector({
-          width: getSvgCoord(args[2], this.format),
-          x1: getSvgCoord(args[3], this.format),
-          y1: getSvgCoord(args[4], this.format),
-          x2: getSvgCoord(args[5], this.format),
-          y2: getSvgCoord(args[6], this.format)
+          width: p.width,
+          x1: p.x1,
+          y1: p.y1,
+          x2: p.x2,
+          y2: p.y2
         });
-        if (args[7]) {
-          shape.shape.line.transform = "rotate(" + args[7] + ")";
-        }
-        if (args[1] === 0) {
-          mask = true;
-        } else {
-          this.addBbox(shape.bbox, args[7]);
+        if (rotation) {
+          shape.shape.line.transform = "rotate(" + rotation + ")";
         }
         break;
-      case 21:
+      case 'rect':
         shape = shapes.rect({
-          cx: getSvgCoord(args[4], this.format),
-          cy: getSvgCoord(args[5], this.format),
-          width: getSvgCoord(args[2], this.format),
-          height: getSvgCoord(args[3], this.format)
+          width: p.width,
+          height: p.height,
+          cx: p.cx,
+          cy: p.cy
         });
-        if (args[6]) {
-          shape.shape.rect.transform = "rotate(" + args[6] + ")";
-        }
-        if (args[1] === 0) {
-          mask = true;
-        } else {
-          this.addBbox(shape.bbox, args[6]);
+        if (rotation) {
+          shape.shape.rect.transform = "rotate(" + rotation + ")";
         }
         break;
-      case 22:
+      case 'lowerLeftRect':
         shape = shapes.lowerLeftRect({
-          x: getSvgCoord(args[4], this.format),
-          y: getSvgCoord(args[5], this.format),
-          width: getSvgCoord(args[2], this.format),
-          height: getSvgCoord(args[3], this.format)
+          width: p.width,
+          height: p.height,
+          x: p.x,
+          y: p.y
         });
-        if (args[6]) {
-          shape.shape.rect.transform = "rotate(" + args[6] + ")";
-        }
-        if (args[1] === 0) {
-          mask = true;
-        } else {
-          this.addBbox(shape.bbox, args[6]);
+        if (rotation) {
+          shape.shape.rect.transform = "rotate(" + rotation + ")";
         }
         break;
-      case 4:
-        points = [];
-        for (i = j = 3, ref = 3 + 2 * args[2]; j <= ref; i = j += 2) {
-          points.push([getSvgCoord(args[i], this.format), getSvgCoord(args[i + 1], this.format)]);
-        }
+      case 'outline':
         shape = shapes.outline({
-          points: points
+          points: p.points
         });
-        if (rot = args[args.length - 1]) {
-          shape.shape.polygon.transform = "rotate(" + rot + ")";
-        }
-        if (args[1] === 0) {
-          mask = true;
-        } else {
-          this.addBbox(shape.bbox, args[args.length - 1]);
+        if (rotation) {
+          shape.shape.polygon.transform = "rotate(" + rotation + ")";
         }
         break;
-      case 5:
-        if (args[6] !== 0 && (args[3] !== 0 || args[4] !== 0)) {
-          throw new RangeError('polygon center must be 0,0 if rotated in macro');
+      case 'polygon':
+        if (rotation && (p.cx !== 0 || p.cy !== 0)) {
+          this.emit('warning', new Warning('a macro polygon can only be rotated if its center is at 0, 0'));
+          rotation = 0;
         }
         shape = shapes.polygon({
-          cx: getSvgCoord(args[3], this.format),
-          cy: getSvgCoord(args[4], this.format),
-          dia: getSvgCoord(args[5], this.format),
-          vertices: args[2],
-          degrees: args[6]
+          vertices: vertices,
+          cx: p.cx,
+          cy: p.cy,
+          dia: p.dia,
+          degrees: rotation
         });
-        if (args[1] === 0) {
-          mask = true;
-        } else {
-          this.addBbox(shape.bbox);
-        }
+        rotation = 0;
         break;
-      case 6:
-        if (args[9] !== 0 && (args[1] !== 0 || args[2] !== 0)) {
-          throw new RangeError('moiré center must be 0,0 if rotated in macro');
-        }
+      case 'moire':
         shape = shapes.moire({
-          cx: getSvgCoord(args[1], this.format),
-          cy: getSvgCoord(args[2], this.format),
-          outerDia: getSvgCoord(args[3], this.format),
-          ringThx: getSvgCoord(args[4], this.format),
-          ringGap: getSvgCoord(args[5], this.format),
-          maxRings: args[6],
-          crossThx: getSvgCoord(args[7], this.format),
-          crossLength: getSvgCoord(args[8], this.format)
+          cx: p.cx,
+          cy: p.cy,
+          outerDia: p.outerDia,
+          ringThx: p.ringThx,
+          ringGap: p.ringGap,
+          maxRings: maxRings,
+          crossThx: p.crossThx,
+          crossLength: p.crossLength
         });
-        if (args[9]) {
-          ref1 = shape.shape;
-          for (k = 0, len = ref1.length; k < len; k++) {
-            s = ref1[k];
-            if (s.line != null) {
-              s.line.transform = "rotate(" + args[9] + ")";
+        if (rotation) {
+          if (p.cx !== 0 || p.cy !== 0) {
+            this.emit('warning', new Warning('a macro moiré can only be rotated if its center is at 0, 0'));
+            rotation = 0;
+          } else {
+            lines = filter(shape.shape, 'line');
+            for (j = 0, len = lines.length; j < len; j++) {
+              obj = lines[j];
+              obj.line.transform = "rotate(" + rotation + ")";
             }
           }
         }
-        this.addBbox(shape.bbox, args[9]);
         break;
-      case 7:
-        if (args[9] !== 0 && (args[1] !== 0 || args[2] !== 0)) {
-          throw new RangeError('thermal center must be 0,0 if rotated in macro');
-        }
+      case 'thermal':
         shape = shapes.thermal({
-          cx: getSvgCoord(args[1], this.format),
-          cy: getSvgCoord(args[2], this.format),
-          outerDia: getSvgCoord(args[3], this.format),
-          innerDia: getSvgCoord(args[4], this.format),
-          gap: getSvgCoord(args[5], this.format)
+          cx: p.cx,
+          cy: p.cy,
+          outerDia: p.outerDia,
+          innerDia: p.innerDia,
+          gap: p.gap
         });
-        if (args[6]) {
-          ref2 = shape.shape;
-          for (l = 0, len1 = ref2.length; l < len1; l++) {
-            s = ref2[l];
-            if (s.mask != null) {
-              ref3 = s.mask._;
-              for (n = 0, len2 = ref3.length; n < len2; n++) {
-                m = ref3[n];
-                if (m.rect != null) {
-                  m.rect.transform = "rotate(" + args[6] + ")";
-                }
-              }
+        if (rotation) {
+          if (p.cx !== 0 || p.cy !== 0) {
+            this.emit('warning', new Warning('a macro thermal can only be rotated if its center is at 0, 0'));
+            rotation = 0;
+          } else {
+            thermalMask = find(shape.shape, 'mask');
+            rects = filter(thermalMask.mask._, 'rect');
+            for (k = 0, len1 = rects.length; k < len1; k++) {
+              obj = rects[k];
+              obj.rect.transform = "rotate(" + rotation + ")";
             }
           }
         }
-        this.addBbox(shape.bbox, args[6]);
-        break;
-      default:
-        throw new Error(args[0] + " is not a valid primitive code");
     }
     if (mask) {
       for (key in shape.shape) {
@@ -5454,9 +9062,9 @@ MacroTool = (function() {
             mask: "url(#" + maskId + ")",
             _: []
           };
-          ref4 = this.shapes;
-          for (o = 0, len3 = ref4.length; o < len3; o++) {
-            s = ref4[o];
+          ref = this.shapes;
+          for (l = 0, len2 = ref.length; l < len2; l++) {
+            s = ref[l];
             group._.push(s);
           }
           this.shapes = [
@@ -5464,19 +9072,22 @@ MacroTool = (function() {
               g: group
             }
           ];
+        } else {
+          return;
         }
         this.masks.push(m);
       }
       return this.masks[this.masks.length - 1].mask._.push(shape.shape);
     } else {
+      this.addBbox(shape.bbox, rotation);
       this.lastExposure = 1;
       if (!Array.isArray(shape.shape)) {
         return this.shapes.push(shape.shape);
       } else {
-        ref5 = shape.shape;
+        ref1 = shape.shape;
         results = [];
-        for (q = 0, len4 = ref5.length; q < len4; q++) {
-          s = ref5[q];
+        for (n = 0, len3 = ref1.length; n < len3; n++) {
+          s = ref1[n];
           if (s.mask != null) {
             results.push(this.masks.push(s));
           } else {
@@ -5494,16 +9105,16 @@ MacroTool = (function() {
       rotation = 0;
     }
     if (!rotation) {
-      if (this.bbox[0] === null || bbox[0] < this.bbox[0]) {
+      if (bbox[0] < this.bbox[0]) {
         this.bbox[0] = bbox[0];
       }
-      if (this.bbox[1] === null || bbox[1] < this.bbox[1]) {
+      if (bbox[1] < this.bbox[1]) {
         this.bbox[1] = bbox[1];
       }
-      if (this.bbox[2] === null || bbox[2] > this.bbox[2]) {
+      if (bbox[2] > this.bbox[2]) {
         this.bbox[2] = bbox[2];
       }
-      if (this.bbox[3] === null || bbox[3] > this.bbox[3]) {
+      if (bbox[3] > this.bbox[3]) {
         return this.bbox[3] = bbox[3];
       }
     } else {
@@ -5520,16 +9131,16 @@ MacroTool = (function() {
         p = points[j];
         x = (p[0] * c) - (p[1] * s);
         y = (p[0] * s) + (p[1] * c);
-        if (this.bbox[0] === null || x < this.bbox[0]) {
+        if (x < this.bbox[0]) {
           this.bbox[0] = x;
         }
-        if (this.bbox[1] === null || y < this.bbox[1]) {
+        if (y < this.bbox[1]) {
           this.bbox[1] = y;
         }
-        if (this.bbox[2] === null || x > this.bbox[2]) {
+        if (x > this.bbox[2]) {
           this.bbox[2] = x;
         }
-        if (this.bbox[3] === null || y > this.bbox[3]) {
+        if (y > this.bbox[3]) {
           this.bbox[3] = y;
         }
       }
@@ -5547,10 +9158,18 @@ MacroTool = (function() {
   };
 
   MacroTool.prototype.getNumber = function(s) {
-    if (s.match(/^[+-]?[\d.]+$/)) {
+    var e, j, len, ref, results;
+    if (Array.isArray(s)) {
+      results = [];
+      for (j = 0, len = s.length; j < len; j++) {
+        e = s[j];
+        results.push(this.getNumber(e));
+      }
+      return results;
+    } else if (s.match(/^[+-]?[\d.]+$/)) {
       return Number(s);
     } else if (s.match(/^\$\d+$/)) {
-      return Number(this.modifiers[s]);
+      return (ref = this.modifiers[s]) != null ? ref : 0;
     } else {
       return this.evaluate(calc.parse(s));
     }
@@ -5573,29 +9192,15 @@ MacroTool = (function() {
 
   return MacroTool;
 
-})();
+})(EventEmitter);
 
 module.exports = MacroTool;
 
 
-},{"./macro-calc":29,"./pad-shapes":32,"./svg-coord":36,"./unique-id":37}],31:[function(require,module,exports){
+},{"./macro-calc":88,"./pad-shapes":91,"./svg-coord":95,"./unique-id":96,"./warning":97,"events":6,"lodash.filter":23,"lodash.find":36,"lodash.mapvalues":50,"lodash.omit":62}],90:[function(require,module,exports){
 var CKEY, DTAB, objToXml, repeat;
 
-repeat = function(pattern, count) {
-  var result;
-  result = '';
-  if (count === 0) {
-    return '';
-  }
-  while (count > 1) {
-    if (count & 1) {
-      result += pattern;
-    }
-    count >>= 1;
-    pattern += pattern;
-  }
-  return result + pattern;
-};
+repeat = require('lodash.repeat');
 
 CKEY = '_';
 
@@ -5686,7 +9291,7 @@ objToXml = function(obj, op) {
 module.exports = objToXml;
 
 
-},{}],32:[function(require,module,exports){
+},{"lodash.repeat":80}],91:[function(require,module,exports){
 var circle, lowerLeftRect, moire, outline, polygon, rect, thermal, unique, vector;
 
 unique = require('./unique-id');
@@ -5876,9 +9481,15 @@ lowerLeftRect = function(p) {
 };
 
 outline = function(p) {
-  var j, len, point, pointString, ref, x, xLast, xMax, xMin, y, yLast, yMax, yMin;
-  if (!(Array.isArray(p.points) && p.points.length > 1)) {
+  var i, j, len, point, pointString, ref, x, xLast, xMax, xMin, y, yLast, yMax, yMin;
+  if (!Array.isArray(p.points)) {
     throw new Error('outline function requires points array');
+  }
+  if (!(p.points.length >= 4)) {
+    throw new Error('outline function requires more than one point');
+  }
+  if (p.points.length % 2 !== 0) {
+    throw new Error('outline function points array length must be even');
   }
   xMin = null;
   yMin = null;
@@ -5886,13 +9497,10 @@ outline = function(p) {
   yMax = null;
   pointString = '';
   ref = p.points;
-  for (j = 0, len = ref.length; j < len; j++) {
-    point = ref[j];
-    if (!(Array.isArray(point) && point.length === 2)) {
-      throw new Error('outline function requires points array');
-    }
-    x = point[0];
-    y = point[1];
+  for (i = j = 0, len = ref.length; j < len; i = j += 2) {
+    point = ref[i];
+    x = point;
+    y = p.points[i + 1];
     if (x < xMin || xMin === null) {
       xMin = x;
     }
@@ -5907,9 +9515,9 @@ outline = function(p) {
     }
     pointString += " " + x + "," + y;
   }
-  xLast = p.points[p.points.length - 1][0];
-  yLast = p.points[p.points.length - 1][1];
-  if (!(xLast === p.points[0][0] && yLast === p.points[0][1])) {
+  xLast = p.points[p.points.length - 2];
+  yLast = p.points[p.points.length - 1];
+  if (!(xLast === p.points[0] && yLast === p.points[1])) {
     throw new RangeError('last point must match first point of outline');
   }
   return {
@@ -6085,14 +9693,12 @@ module.exports = {
 };
 
 
-},{"./unique-id":37}],33:[function(require,module,exports){
-var Parser, Transform, isError,
+},{"./unique-id":96}],92:[function(require,module,exports){
+var Parser, Transform,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
 Transform = require('stream').Transform;
-
-isError = require('lodash.iserror');
 
 Parser = (function(superClass) {
   extend(Parser, superClass);
@@ -6121,21 +9727,13 @@ Parser = (function(superClass) {
   }
 
   Parser.prototype._transform = function(chunk, encoding, done) {
-    var result;
     if (chunk.block != null) {
-      result = this.parseBlock(chunk.block, chunk.line);
+      return this.parseBlock(chunk.block, chunk.line, done);
     } else if (chunk.param != null) {
-      result = this.parseParam(chunk.param, chunk.line);
+      return this.parseParam(chunk.param, chunk.line, done);
+    } else {
+      return done();
     }
-    if (isError(result)) {
-      done(result);
-      return;
-    }
-    if (result != null) {
-      result.line = chunk.line;
-      this.push(result);
-    }
-    return done();
   };
 
   return Parser;
@@ -6145,8 +9743,8 @@ Parser = (function(superClass) {
 module.exports = Parser;
 
 
-},{"lodash.iserror":23,"stream":21}],34:[function(require,module,exports){
-var ASSUMED_UNITS, HALF_PI, Macro, Plotter, THREEHALF_PI, TWO_PI, TransformStream, Warning, coordFactor, tool, unique,
+},{"stream":21}],93:[function(require,module,exports){
+var ASSUMED_UNITS, HALF_PI, Macro, Plotter, THREEHALF_PI, TWO_PI, TransformStream, Warning, addBbox, coordFactor, tool, unique,
   extend = function(child, parent) { for (var key in parent) { if (hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   hasProp = {}.hasOwnProperty;
 
@@ -6170,6 +9768,21 @@ TWO_PI = 2 * Math.PI;
 
 ASSUMED_UNITS = 'in';
 
+addBbox = function(bbox, target) {
+  if (bbox.xMin < target.xMin) {
+    target.xMin = bbox.xMin;
+  }
+  if (bbox.yMin < target.yMin) {
+    target.yMin = bbox.yMin;
+  }
+  if (bbox.xMax > target.xMax) {
+    target.xMax = bbox.xMax;
+  }
+  if (bbox.yMax > target.yMax) {
+    return target.yMax = bbox.yMax;
+  }
+};
+
 Plotter = (function(superClass) {
   extend(Plotter, superClass);
 
@@ -6180,34 +9793,631 @@ Plotter = (function(superClass) {
     this.units = opts.units;
     this.notation = opts.notation;
     this.tools = {};
+    this.macros = {};
+    this.stepRepeat = {
+      x: 1,
+      y: 1,
+      i: 0,
+      j: 0
+    };
+    this.x = 0;
+    this.y = 0;
+    this.firstOperation = true;
+    this.polarity = 'D';
+    this.defs = [];
+    this.current = [];
+    this.layerBbox = {
+      xMin: Infinity,
+      yMin: Infinity,
+      xMax: -Infinity,
+      yMax: -Infinity
+    };
+    this.stepRepeat = {
+      x: 1,
+      y: 1,
+      i: 0,
+      j: 0
+    };
+    this.srOverClear = false;
+    this.srOverCurrent = [];
+    this.path = [];
+    this.group = {
+      g: {
+        _: []
+      }
+    };
+    this.bbox = {
+      xMin: Infinity,
+      yMin: Infinity,
+      xMax: -Infinity,
+      yMax: -Infinity
+    };
     Plotter.__super__.constructor.call(this, {
       objectMode: true
     });
   }
 
   Plotter.prototype._transform = function(chunk, encoding, done) {
-    var ref, state, val;
-    ref = chunk.set;
-    for (state in ref) {
-      val = ref[state];
+    if (chunk.set != null) {
+      return this.handleSet(chunk.set, chunk.line, done);
+    } else if (chunk["new"] != null) {
+      return this.handleNew(chunk["new"], chunk.line, done);
+    } else if (chunk.tool != null) {
+      return this.handleTool(chunk.tool, chunk.line, done);
+    } else if (chunk.macro != null) {
+      return this.handleMacro(chunk.macro, chunk.line, done);
+    } else if (chunk.op != null) {
+      return this.handleOperation(chunk.op, chunk.line, done);
+    } else {
+      return done();
+    }
+  };
+
+  Plotter.prototype._flush = function(done) {
+    var children, height, width, xml;
+    this.finish();
+    if (!this.group.g._.length) {
+      this.bbox = {
+        xMin: 0,
+        yMin: 0,
+        xMax: 0,
+        yMax: 0
+      };
+    } else {
+      children = [
+        {
+          defs: {
+            _: this.defs
+          }
+        }, this.group
+      ];
+    }
+    width = this.bbox.xMax - this.bbox.xMin;
+    height = this.bbox.yMax - this.bbox.yMin;
+    xml = {
+      svg: {
+        xmlns: 'http://www.w3.org/2000/svg',
+        version: '1.1',
+        'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+        width: "" + (width / coordFactor) + this.units,
+        height: "" + (height / coordFactor) + this.units,
+        viewBox: [this.bbox.xMin, this.bbox.yMin, width, height],
+        'stroke-linecap': 'round',
+        'stroke-linejoin': 'round',
+        'stroke-width': 0,
+        stroke: '#000',
+        _: children != null ? children : []
+      }
+    };
+    this.push(xml);
+    return done();
+  };
+
+  Plotter.prototype.handleSet = function(set, line, done) {
+    var state, val;
+    for (state in set) {
+      val = set[state];
       if (state === 'currentTool') {
         if (this.tools[val] == null) {
-          this.emit('warning', new Warning("tool " + val + " is undefined", chunk.line));
+          this.emit('warning', new Warning("tool " + val + " is undefined", line));
         }
         if (this.region) {
-          done(new Error("line " + chunk.line + " - cannot change tool while region mode is on"));
-          return;
+          return done(new Error("line " + line + " - cannot change tool while region mode is on"));
         }
-      }
-      if (state === 'units' || state === 'backupUnits' || state === 'notation') {
+        this.changeTool(val);
+      } else if (state === 'units' || state === 'backupUnits' || state === 'notation') {
         if (this[state] == null) {
           this[state] = val;
         }
       } else {
+        if (state === 'region') {
+          this.finishPath();
+        }
         this[state] = val;
       }
     }
     return done();
+  };
+
+  Plotter.prototype.handleNew = function(newLayer, line, done) {
+    this.finishLayer();
+    if (newLayer.sr != null) {
+      this.finishSR();
+      this.stepRepeat = newLayer.sr;
+    } else if (newLayer.layer != null) {
+      this.polarity = newLayer.layer;
+    } else {
+      throw new Error(newLayer + " is a poorly formatted or unknown new command");
+    }
+    return done();
+  };
+
+  Plotter.prototype.handleTool = function(toolCommand, line, done) {
+    var code, handleMacroRunWarning, macro, params, t;
+    code = Object.keys(toolCommand)[0];
+    params = toolCommand[code];
+    if (this.tools[code] != null) {
+      return done(new Error("line " + line + " - tool " + code + " was previously defined"));
+    }
+    if (params.macro != null) {
+      macro = this.macros[params.macro];
+      handleMacroRunWarning = (function(_this) {
+        return function(w) {
+          w.message = "warning from macro " + params.macro + " run at line " + line + " - " + w.message;
+          return _this.emit('warning', w);
+        };
+      })(this);
+      macro.on('warning', handleMacroRunWarning);
+      t = macro.run(code, params.mods);
+      macro.removeListener('warning', handleMacroRunWarning);
+    } else {
+      t = tool(code, params);
+    }
+    this.tools[code] = {
+      code: code,
+      trace: t.trace,
+      pad: t.pad,
+      flash: function(x, y) {
+        return {
+          use: {
+            x: x,
+            y: y,
+            'xlink:href': "#" + t.padId
+          }
+        };
+      },
+      flashed: false,
+      bbox: function(x, y) {
+        if (x == null) {
+          x = 0;
+        }
+        if (y == null) {
+          y = 0;
+        }
+        return {
+          xMin: x + t.bbox[0],
+          yMin: y + t.bbox[1],
+          xMax: x + t.bbox[2],
+          yMax: y + t.bbox[3]
+        };
+      }
+    };
+    this.changeTool(code);
+    return done();
+  };
+
+  Plotter.prototype.handleMacro = function(macroCommand, line, done) {
+    var blocks, macro, name;
+    name = Object.keys(macroCommand)[0];
+    blocks = macroCommand[name];
+    macro = new Macro(blocks);
+    this.macros[name] = macro;
+    return done();
+  };
+
+  Plotter.prototype.changeTool = function(code) {
+    this.finishPath();
+    return this.currentTool = this.tools[code];
+  };
+
+  Plotter.prototype.prepareForFirstOperation = function(line) {
+    var msg;
+    this.firstOperation = false;
+    if (this.units == null) {
+      msg = "line " + line + " - ";
+      if (this.backupUnits != null) {
+        this.units = this.backupUnits;
+        msg += "units set to " + this.units + " by deprecated G70/1";
+      } else {
+        this.units = ASSUMED_UNITS;
+        msg += "no units set before first move; assuming " + ASSUMED_UNITS;
+      }
+      this.emit('warning', new Warning(msg));
+    }
+    if (this.notation == null) {
+      this.notation = 'A';
+      msg = "line " + line + " - no coordinate notation set before first move; assuming absolute";
+      return this.emit('warning', new Warning(msg));
+    }
+  };
+
+  Plotter.prototype.handleOperation = function(operation, line, done) {
+    var k, len, ref, ref1, ref2, ref3, ref4, sX, sY, shape;
+    if (this.firstOperation) {
+      this.prepareForFirstOperation(line);
+    }
+    sX = this.x;
+    sY = this.y;
+    if (this.notation === 'I') {
+      operation.x = ((ref = operation.x) != null ? ref : 0) + this.x;
+      operation.y = ((ref1 = operation.y) != null ? ref1 : 0) + this.y;
+    }
+    this.x = (ref2 = operation.x) != null ? ref2 : this.x;
+    this.y = (ref3 = operation.y) != null ? ref3 : this.y;
+    if (operation["do"] === 'last') {
+      this.emit('warning', new Warning("line " + line + " - modal operation codes are deprecated and not guarenteed to render properly"));
+      operation["do"] = this.lastOperation;
+    } else {
+      this.lastOperation = operation["do"];
+    }
+    if (operation["do"] === 'flash') {
+      if (this.region) {
+        return done(new Error("line " + line + " - cannot flash while in region mode"));
+      }
+      this.finishPath();
+      if (!this.currentTool.flashed) {
+        ref4 = this.currentTool.pad;
+        for (k = 0, len = ref4.length; k < len; k++) {
+          shape = ref4[k];
+          this.defs.push(shape);
+        }
+        this.currentTool.flashed = true;
+      }
+      this.current.push(this.currentTool.flash(this.x, this.y));
+      addBbox(this.currentTool.bbox(this.x, this.y), this.layerBbox);
+    } else if (operation["do"] === 'int') {
+      if (!this.region && !this.currentTool.trace) {
+        return done(new Error("line " + line + " - " + this.currentTool.code + " is not a strokable tool"));
+      }
+      if (this.mode == null) {
+        this.mode = 'i';
+        this.emit('warning', new Warning("line " + line + " - interpolation mode was not set before first stroke; assuming linear"));
+      }
+      if (!this.path.length) {
+        this.path.push('M', sX, sY);
+      }
+      if (this.mode === 'i') {
+        this.drawLine(sX, sY, line);
+      } else {
+        if (!this.region && (this.currentTool.trace['stroke-width'] == null)) {
+          return done(new Error("line " + line + " - cannot stroke an arc with non-circular tool " + this.currentTool.code));
+        }
+        if (this.quad == null) {
+          return done(new Error("line " + line + " - quadrant mode was not set before first arc draw"));
+        }
+        this.drawArc(sX, sY, operation.i, operation.j, line);
+      }
+    } else if (this.path.length) {
+      this.path.push('M', this.x, this.y);
+    }
+    return done();
+  };
+
+  Plotter.prototype.drawLine = function(sX, sY, lineNumber) {
+    var endBbox, exm, exp, eym, eyp, halfHeight, halfWidth, startBbox, sxm, sxp, sym, syp, theta;
+    if (this.region) {
+      startBbox = {
+        xMin: sX,
+        yMin: sY,
+        xMax: sX,
+        yMax: sY
+      };
+      endBbox = {
+        xMin: this.x,
+        yMin: this.y,
+        xMax: this.x,
+        yMax: this.y
+      };
+    } else {
+      startBbox = this.currentTool.bbox(sX, sY);
+      endBbox = this.currentTool.bbox(this.x, this.y);
+    }
+    addBbox(startBbox, this.layerBbox);
+    addBbox(endBbox, this.layerBbox);
+    if (this.region || (this.currentTool.trace['stroke-width'] != null)) {
+      return this.path.push('L', this.x, this.y);
+    } else {
+      halfWidth = this.currentTool.pad[0].rect.width / 2;
+      halfHeight = this.currentTool.pad[0].rect.height / 2;
+      sxm = sX - halfWidth;
+      sxp = sX + halfWidth;
+      sym = sY - halfHeight;
+      syp = sY + halfHeight;
+      exm = this.x - halfWidth;
+      exp = this.x + halfWidth;
+      eym = this.y - halfHeight;
+      eyp = this.y + halfHeight;
+      theta = Math.atan2(this.y - sY, this.x - sX);
+      if ((0 <= theta && theta < HALF_PI)) {
+        return this.path.push('M', sxm, sym, sxp, sym, exp, eym, exp, eyp, exm, eyp, sxm, syp, 'Z');
+      } else if ((HALF_PI <= theta && theta <= Math.PI)) {
+        return this.path.push('M', sxm, sym, sxp, sym, sxp, syp, exp, eyp, exm, eyp, exm, eym, 'Z');
+      } else if ((-Math.PI <= theta && theta < -HALF_PI)) {
+        return this.path.push('M', sxp, sym, sxp, syp, sxm, syp, exm, eyp, exm, eym, exp, eym, 'Z');
+      } else if ((-HALF_PI <= theta && theta < 0)) {
+        return this.path.push('M', sxm, sym, exm, eym, exp, eym, exp, eyp, sxp, syp, sxm, syp, 'Z');
+      } else {
+        throw new Error("rectangular stroke angle calculation yielded: " + theta);
+      }
+    }
+  };
+
+  Plotter.prototype.drawArc = function(sX, sY, i, j, lineNumber) {
+    var c, cen, centerCandidates, dist, k, l, large, len, len1, r, rTool, ref, sweep, theta, thetaE, thetaS, validCenters, xDiff, xMax, xMin, xn, xp, yDiff, yMax, yMin, yn, yp, zeroLength;
+    if (i == null) {
+      i = 0;
+    }
+    if (j == null) {
+      j = 0;
+    }
+    r = Math.sqrt(Math.pow(i, 2) + Math.pow(j, 2));
+    sweep = this.mode === 'cw' ? 0 : 1;
+    large = 0;
+    validCenters = [];
+    centerCandidates = [[sX + i, sY + j]];
+    if (this.quad === 's') {
+      centerCandidates.push([sX - i, sY - j], [sX - i, sY + j], [sX + i, sY - j]);
+    }
+    for (k = 0, len = centerCandidates.length; k < len; k++) {
+      c = centerCandidates[k];
+      dist = Math.sqrt(Math.pow(c[0] - this.x, 2) + Math.pow(c[1] - this.y, 2));
+      if ((Math.abs(r - dist)) < this.epsilon) {
+        validCenters.push({
+          x: c[0],
+          y: c[1]
+        });
+      }
+    }
+    thetaE = 0;
+    thetaS = 0;
+    cen = null;
+    for (l = 0, len1 = validCenters.length; l < len1; l++) {
+      c = validCenters[l];
+      thetaE = Math.atan2(this.y - c.y, this.x - c.x);
+      if (thetaE < 0) {
+        thetaE += TWO_PI;
+      }
+      thetaS = Math.atan2(sY - c.y, sX - c.x);
+      if (thetaS < 0) {
+        thetaS += TWO_PI;
+      }
+      if (this.mode === 'cw' && thetaS < thetaE) {
+        thetaS += TWO_PI;
+      } else if (this.mode === 'ccw' && thetaE < thetaS) {
+        thetaE += TWO_PI;
+      }
+      theta = Math.abs(thetaE - thetaS);
+      if (this.quad === 's' && theta <= HALF_PI) {
+        cen = c;
+      } else if (this.quad === 'm') {
+        if (theta >= Math.PI) {
+          large = 1;
+        }
+        cen = {
+          x: c.x,
+          y: c.y
+        };
+      }
+      if (cen != null) {
+        break;
+      }
+    }
+    if (cen == null) {
+      this.emit('warning', new Warning("line " + lineNumber + " - " + this.mode + " arc from (" + sX + ", " + sY + ") to (" + this.x + ", " + this.y + ") with center offset (" + i + ", " + j + ") is an impossible arc in " + (this.quad === 's' ? 'single' : 'multi') + " quadrant mode with epsilon set to " + this.epsilon));
+      return;
+    }
+    rTool = this.region ? 0 : this.currentTool.bbox().xMax;
+    if (this.mode === 'cw') {
+      ref = [thetaS, thetaE], thetaE = ref[0], thetaS = ref[1];
+    }
+    xp = thetaS > 0 ? TWO_PI : 0;
+    yp = HALF_PI + (thetaS > HALF_PI ? TWO_PI : 0);
+    xn = Math.PI + (thetaS > Math.PI ? TWO_PI : 0);
+    yn = THREEHALF_PI + (thetaS > THREEHALF_PI ? TWO_PI : 0);
+    if ((thetaS <= xn && xn <= thetaE)) {
+      xMin = cen.x - r - rTool;
+    } else {
+      xMin = (Math.min(sX, this.x)) - rTool;
+    }
+    if ((thetaS <= xp && xp <= thetaE)) {
+      xMax = cen.x + r + rTool;
+    } else {
+      xMax = (Math.max(sX, this.x)) + rTool;
+    }
+    if ((thetaS <= yn && yn <= thetaE)) {
+      yMin = cen.y - r - rTool;
+    } else {
+      yMin = (Math.min(sY, this.y)) - rTool;
+    }
+    if ((thetaS <= yp && yp <= thetaE)) {
+      yMax = cen.y + r + rTool;
+    } else {
+      yMax = (Math.max(sY, this.y)) + rTool;
+    }
+    xDiff = Math.abs(sX - this.x);
+    yDiff = Math.abs(sY - this.y);
+    zeroLength = (xDiff < this.epsilon) && (yDiff < this.epsilon);
+    if (this.quad === 'm' && zeroLength) {
+      this.path.push('A', r, r, 0, 0, sweep, this.x + 2 * i, this.y + 2 * j);
+      xMin = cen.x - r - rTool;
+      yMin = cen.y - r - rTool;
+      xMax = cen.x + r + rTool;
+      yMax = cen.y + r + rTool;
+    }
+    this.path.push('A', r, r, 0, large, sweep, this.x, this.y);
+    if (this.quad === 's' && zeroLength) {
+      this.path.push('Z');
+    }
+    return addBbox({
+      xMin: xMin,
+      yMin: yMin,
+      xMax: xMax,
+      yMax: yMax
+    }, this.layerBbox);
+  };
+
+  Plotter.prototype.finishPath = function() {
+    var key, p, ref, val;
+    if (this.path.length) {
+      p = {
+        path: {
+          d: this.path
+        }
+      };
+      if (this.region) {
+        this.path.push('Z');
+      } else {
+        ref = this.currentTool.trace;
+        for (key in ref) {
+          val = ref[key];
+          p.path[key] = val;
+        }
+      }
+      this.current.push(p);
+      return this.path = [];
+    }
+  };
+
+  Plotter.prototype.finishLayer = function() {
+    var c, h, id, k, l, len, n, obj, ref, ref1, ref2, srId, u, w, x, y;
+    this.finishPath();
+    if (!this.current.length) {
+      return;
+    }
+    if (this.stepRepeat.x > 1 || this.stepRepeat.y > 1) {
+      srId = "gerber-sr_" + (unique());
+      this.current = [
+        {
+          g: {
+            id: srId,
+            _: this.current
+          }
+        }
+      ];
+      if (this.srOverClear || this.stepRepeat.i < this.layerBbox.xMax - this.layerBbox.xMin || this.stepRepeat.j < this.layerBbox.yMax - this.layerBbox.yMin) {
+        obj = {};
+        obj[this.polarity] = srId;
+        this.srOverCurrent.push(obj);
+        if (this.polarity === 'C') {
+          this.srOverClear = true;
+          this.defs.push(this.current[0]);
+        }
+      }
+      for (x = k = 0, ref = this.stepRepeat.x; 0 <= ref ? k < ref : k > ref; x = 0 <= ref ? ++k : --k) {
+        for (y = l = 0, ref1 = this.stepRepeat.y; 0 <= ref1 ? l < ref1 : l > ref1; y = 0 <= ref1 ? ++l : --l) {
+          if (!(x === 0 && y === 0)) {
+            u = {
+              use: {
+                'xlink:href': "#" + srId
+              }
+            };
+            if (x !== 0) {
+              u.use.x = x * this.stepRepeat.i;
+            }
+            if (y !== 0) {
+              u.use.y = y * this.stepRepeat.j;
+            }
+            this.current.push(u);
+          }
+        }
+      }
+      this.layerBbox.xMax += (this.stepRepeat.x - 1) * this.stepRepeat.i;
+      this.layerBbox.yMax += (this.stepRepeat.y - 1) * this.stepRepeat.j;
+    }
+    addBbox(this.layerBbox, this.bbox);
+    this.layerBbox = {
+      xMin: Infinity,
+      yMin: Infinity,
+      xMax: -Infinity,
+      yMax: -Infinity
+    };
+    if (this.polarity === 'D') {
+      if (this.group.g.mask != null) {
+        this.current.unshift(this.group);
+      }
+      if ((this.group.g.mask == null) && this.group.g._.length) {
+        ref2 = this.current;
+        for (n = 0, len = ref2.length; n < len; n++) {
+          c = ref2[n];
+          this.group.g._.push(c);
+        }
+      } else {
+        this.group = {
+          g: {
+            _: this.current
+          }
+        };
+      }
+    } else if (this.polarity === 'C' && !this.srOverClear) {
+      id = "gerber-mask_" + (unique());
+      w = this.bbox.xMax - this.bbox.xMin;
+      h = this.bbox.yMax - this.bbox.yMin;
+      this.current.unshift({
+        rect: {
+          x: this.bbox.xMin,
+          y: this.bbox.yMin,
+          width: w,
+          height: h,
+          fill: '#fff'
+        }
+      });
+      this.defs.push({
+        mask: {
+          id: id,
+          color: '#000',
+          _: this.current
+        }
+      });
+      this.group.g.mask = "url(#" + id + ")";
+    }
+    return this.current = [];
+  };
+
+  Plotter.prototype.finishSR = function() {
+    var k, l, layer, len, m, maskId, n, ref, ref1, ref2, ref3, ref4, ref5, u, x, y;
+    if (this.srOverClear && this.srOverCurrent) {
+      maskId = "gerber-sr-mask_" + (unique());
+      m = {
+        mask: {
+          color: '#000',
+          id: maskId,
+          _: []
+        }
+      };
+      m.mask._.push({
+        rect: {
+          fill: '#fff',
+          x: this.bbox.xMin,
+          y: this.bbox.yMin,
+          width: this.bbox.xMax - this.bbox.xMin,
+          height: this.bbox.yMax - this.bbox.yMin
+        }
+      });
+      for (x = k = 0, ref = this.stepRepeat.x * this.stepRepeat.i, ref1 = this.stepRepeat.i; ref1 > 0 ? k < ref : k > ref; x = k += ref1) {
+        for (y = l = 0, ref2 = this.stepRepeat.y * this.stepRepeat.j, ref3 = this.stepRepeat.j; ref3 > 0 ? l < ref2 : l > ref2; y = l += ref3) {
+          ref4 = this.srOverCurrent;
+          for (n = 0, len = ref4.length; n < len; n++) {
+            layer = ref4[n];
+            u = {
+              use: {}
+            };
+            if (x !== 0) {
+              u.use.x = x;
+            }
+            if (y !== 0) {
+              u.use.y = y;
+            }
+            u.use['xlink:href'] = '#' + ((ref5 = layer.C) != null ? ref5 : layer.D);
+            if (layer.D != null) {
+              u.use.fill = '#fff';
+            }
+            m.mask._.push(u);
+          }
+        }
+      }
+      this.srOverClear = false;
+      this.srOverCurrent = [];
+      this.defs.push(m);
+      return this.group.g.mask = "url(#" + maskId + ")";
+    }
+  };
+
+  Plotter.prototype.finish = function() {
+    this.finishLayer();
+    this.finishSR();
+    this.group.g.fill = 'currentColor';
+    this.group.g.stroke = 'currentColor';
+    return this.group.g.transform = "translate(0," + (this.bbox.yMin + this.bbox.yMax) + ") scale(1,-1)";
   };
 
   return Plotter;
@@ -6217,7 +10427,7 @@ Plotter = (function(superClass) {
 module.exports = Plotter;
 
 
-},{"./macro-tool":30,"./standard-tool":35,"./svg-coord":36,"./unique-id":37,"./warning":38,"stream":21}],35:[function(require,module,exports){
+},{"./macro-tool":89,"./standard-tool":94,"./svg-coord":95,"./unique-id":96,"./warning":97,"stream":21}],94:[function(require,module,exports){
 var shapes, standardTool, unique;
 
 unique = require('./unique-id');
@@ -6233,13 +10443,9 @@ standardTool = function(tool, p) {
   p.cx = 0;
   p.cy = 0;
   id = "tool-" + tool + "-pad-" + (unique());
-  shape = '';
   if ((p.dia != null) && (p.vertices == null)) {
     if ((p.obround != null) || (p.width != null) || (p.height != null) || (p.degrees != null)) {
-      throw new Error("incompatible parameters for tool " + tool);
-    }
-    if (p.dia < 0) {
-      throw new RangeError(tool + " circle diameter out of range (" + p.dia + "<0)");
+      throw new Error(p + " contains invalid tool parameters");
     }
     shape = 'circle';
     if (p.hole == null) {
@@ -6250,41 +10456,23 @@ standardTool = function(tool, p) {
     }
   } else if ((p.width != null) && (p.height != null)) {
     if ((p.dia != null) || (p.vertices != null) || (p.degrees != null)) {
-      throw new Error("incompatible parameters for tool " + tool);
-    }
-    if (p.width < 0) {
-      throw new RangeError(tool + " rect width out of range (" + p.width + "<0)");
-    }
-    if (p.height < 0) {
-      throw new RangeError(tool + " rect height out of range (" + p.height + "<0)");
+      throw new Error(p + " contains invalid tool parameters");
     }
     shape = 'rect';
-    if ((p.width === 0 || p.height === 0) && !p.obround) {
-      console.warn("zero-size rectangle tools are not allowed; converting " + tool + " to a zero-size circle");
-      shape = 'circle';
-      p.dia = 0;
-    }
     if (!((p.hole != null) || p.obround)) {
       result.trace = {};
     }
   } else if ((p.dia != null) && (p.vertices != null)) {
     if ((p.obround != null) || (p.width != null) || (p.height != null)) {
-      throw new Error("incompatible parameters for tool " + tool);
-    }
-    if (p.vertices < 3 || p.vertices > 12) {
-      throw new RangeError(tool + " polygon points out of range (" + p.vertices + "<3 or >12)]");
+      throw new Error(p + " contains invalid tool parameters");
     }
     shape = 'polygon';
   } else {
-    throw new Error('unidentified standard tool shape');
+    throw new Error(p + " contains invalid tool parameters");
   }
   pad = shapes[shape](p);
   if (p.hole != null) {
-    hole = null;
     if ((p.hole.dia != null) && (p.hole.width == null) && (p.hole.height == null)) {
-      if (!(p.hole.dia >= 0)) {
-        throw new RangeError(tool + " hole diameter out of range (" + p.hole.dia + "<0)");
-      }
       hole = shapes.circle({
         cx: p.cx,
         cy: p.cy,
@@ -6293,12 +10481,6 @@ standardTool = function(tool, p) {
       hole = hole.shape;
       hole.circle.fill = '#000';
     } else if ((p.hole.width != null) && (p.hole.height != null)) {
-      if (!(p.hole.width >= 0)) {
-        throw new RangeError(tool + " hole width out of range (" + p.hole.width + "<0)");
-      }
-      if (!(p.hole.height >= 0)) {
-        throw new RangeError(tool + " hole height out of range (" + p.hole.height + "<0)");
-      }
       hole = shapes.rect({
         cx: p.cx,
         cy: p.cy,
@@ -6308,7 +10490,7 @@ standardTool = function(tool, p) {
       hole = hole.shape;
       hole.rect.fill = '#000';
     } else {
-      throw new Error(tool + " has invalid hole parameters");
+      throw new Error(p + " contains invalid tool hole parameters");
     }
     maskId = id + '-mask';
     mask = {
@@ -6330,9 +10512,7 @@ standardTool = function(tool, p) {
     pad.shape[shape].mask = "url(#" + maskId + ")";
     result.pad.push(mask);
   }
-  if (id) {
-    pad.shape[shape].id = id;
-  }
+  pad.shape[shape].id = id;
   result.pad.push(pad.shape);
   result.bbox = pad.bbox;
   result.padId = id;
@@ -6342,7 +10522,7 @@ standardTool = function(tool, p) {
 module.exports = standardTool;
 
 
-},{"./pad-shapes":32,"./unique-id":37}],36:[function(require,module,exports){
+},{"./pad-shapes":91,"./unique-id":96}],95:[function(require,module,exports){
 var SVG_COORD_E, getSvgCoord,
   indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -6396,6 +10576,8 @@ getSvgCoord = function(numberString, format) {
       while (after.length < format.places[1]) {
         after = '0' + after;
       }
+    } else {
+      return NaN;
     }
   }
   while (after.length < SVG_COORD_E) {
@@ -6412,7 +10594,7 @@ module.exports = {
 };
 
 
-},{}],37:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 var generateUniqueId, id;
 
 id = 1000;
@@ -6424,7 +10606,7 @@ generateUniqueId = function() {
 module.exports = generateUniqueId;
 
 
-},{}],38:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 var Warning;
 
 Warning = (function() {
@@ -6440,152 +10622,5 @@ Warning = (function() {
 module.exports = Warning;
 
 
-},{}],39:[function(require,module,exports){
-(function (global){
-var DEFAULT_OPTS, DrillParser, DrillReader, GerberParser, GerberReader, Plotter, builder, coordFactor;
-
-builder = require('./obj-to-xml');
-
-Plotter = require('./plotter');
-
-DrillReader = require('./drill-reader');
-
-DrillParser = require('./drill-parser');
-
-GerberReader = require('./gerber-reader');
-
-GerberParser = require('./gerber-parser');
-
-coordFactor = require('./svg-coord').factor;
-
-DEFAULT_OPTS = {
-  drill: false,
-  pretty: false,
-  object: false,
-  warnArr: null,
-  places: null,
-  zero: null,
-  notation: null,
-  units: null
-};
-
-module.exports = function(file, options) {
-  var a, error, height, key, oldWarn, opts, p, parser, parserOpts, plotterOpts, reader, ref, root, val, width, xml, xmlObject;
-  if (options == null) {
-    options = {};
-  }
-  opts = {};
-  for (key in DEFAULT_OPTS) {
-    val = DEFAULT_OPTS[key];
-    opts[key] = val;
-  }
-  for (key in options) {
-    val = options[key];
-    opts[key] = val;
-  }
-  if (typeof file === 'object') {
-    if (file.svg != null) {
-      return builder(file, {
-        pretty: opts.pretty
-      });
-    } else {
-      throw new Error('non SVG object cannot be converted to an SVG string');
-    }
-  }
-  parserOpts = null;
-  if ((opts.places != null) || (opts.zero != null)) {
-    parserOpts = {
-      places: opts.places,
-      zero: opts.zero
-    };
-  }
-  if (opts.drill) {
-    reader = new DrillReader(file);
-    parser = new DrillParser(parserOpts);
-  } else {
-    reader = new GerberReader(file);
-    parser = new GerberParser(parserOpts);
-  }
-  plotterOpts = null;
-  if ((opts.notation != null) || (opts.units != null)) {
-    plotterOpts = {
-      notation: opts.notation,
-      units: opts.units
-    };
-  }
-  p = new Plotter(reader, parser, plotterOpts);
-  oldWarn = null;
-  root = null;
-  if (Array.isArray(opts.warnArr)) {
-    root = typeof window !== "undefined" && window !== null ? window : global;
-    if (root.console == null) {
-      root.console = {};
-    }
-    oldWarn = root.console.warn;
-    root.console.warn = function(chunk) {
-      return opts.warnArr.push(chunk.toString());
-    };
-  }
-  try {
-    xmlObject = p.plot();
-  } catch (_error) {
-    error = _error;
-    throw new Error("Error at line " + p.reader.line + " - " + error.message);
-  } finally {
-    if ((oldWarn != null) && (root != null)) {
-      root.console.warn = oldWarn;
-    }
-  }
-  if (!(p.bbox.xMin >= p.bbox.xMax)) {
-    width = p.bbox.xMax - p.bbox.xMin;
-  } else {
-    p.bbox.xMin = 0;
-    p.bbox.xMax = 0;
-    width = 0;
-  }
-  if (!(p.bbox.yMin >= p.bbox.yMax)) {
-    height = p.bbox.yMax - p.bbox.yMin;
-  } else {
-    p.bbox.yMin = 0;
-    p.bbox.yMax = 0;
-    height = 0;
-  }
-  xml = {
-    svg: {
-      xmlns: 'http://www.w3.org/2000/svg',
-      version: '1.1',
-      'xmlns:xlink': 'http://www.w3.org/1999/xlink',
-      width: "" + (width / coordFactor) + p.units,
-      height: "" + (height / coordFactor) + p.units,
-      viewBox: [p.bbox.xMin, p.bbox.yMin, width, height],
-      _: []
-    }
-  };
-  ref = p.attr;
-  for (a in ref) {
-    val = ref[a];
-    xml.svg[a] = val;
-  }
-  if (p.defs.length) {
-    xml.svg._.push({
-      defs: {
-        _: p.defs
-      }
-    });
-  }
-  if (p.group.g._.length) {
-    xml.svg._.push(p.group);
-  }
-  if (!opts.object) {
-    return builder(xml, {
-      pretty: opts.pretty
-    });
-  } else {
-    return xml;
-  }
-};
-
-
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./drill-parser":25,"./drill-reader":26,"./gerber-parser":27,"./gerber-reader":28,"./obj-to-xml":31,"./plotter":34,"./svg-coord":36}]},{},[39])(39)
+},{}]},{},[87])(87)
 });
