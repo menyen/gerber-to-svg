@@ -404,17 +404,20 @@ class Plotter
     # valid candidates for center
     validCen = []
     # potential candidates
-    cand = [ [sx + i, sy + j] ]
-    if @quad is 's'
-      cand.push [sx - i, sy - j], [sx - i, sy + j], [sx + i, sy - j]
-    # loop through the candidates and find centers that make sense
-    for c in cand
-      dist = Math.sqrt (c[0] - ex) ** 2 + (c[1] - ey) ** 2
-      if (Math.abs r - dist) < arcEps then validCen.push { x: c[0], y: c[1] }
+
+    if @quad is 's' 
+        cand.push [sx + i, sy + j], [sx - i, sy - j], [sx - i, sy + j], [sx + i, sy - j]
+        for c in cand 
+            dist = Math.sqrt (c[0] - ex) ** 2 + (c[1] - ey) ** 2
+            if (Math.abs r - dist) < arcEps then validCen.push { x: c[0], y: c[1] }
+    else
+        validCen.push [sx + i, sy + j]
+
     # now let's calculate some angles
     thetaE = 0
     thetaS = 0
     cen = null
+
     # at most, we'll have two candidates
     # check the points to make sure we have a valid arc
     for c in validCen
