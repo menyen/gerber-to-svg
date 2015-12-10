@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/mcous/gerber-to-svg.git"
+    "url": "git://github.com/MacroFab/gerber-to-svg.git"
   },
   "keywords": [
     "svg",
