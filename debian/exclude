@@ -1,7 +1,0 @@
-apps/GerbConv/.gitignore
-apps/GerbConv/.perltidyrc
-apps/GerbConv/.tidyallrc
-apps/GerbConv/Makefile
-apps/GerbConv/deps
-apps/GerbConv/init
-apps/GerbConv/t
