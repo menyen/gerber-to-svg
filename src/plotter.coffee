@@ -405,13 +405,14 @@ class Plotter
     validCen = []
     # potential candidates
 
-    if @quad is 's' 
-        cand.push [sx + i, sy + j], [sx - i, sy - j], [sx - i, sy + j], [sx + i, sy - j]
-        for c in cand 
-            dist = Math.sqrt (c[0] - ex) ** 2 + (c[1] - ey) ** 2
-            if (Math.abs r - dist) < arcEps then validCen.push { x: c[0], y: c[1] }
+    if @quad is 's'
+      cand.push [sx + i, sy + j], [sx - i, sy - j],
+         [sx - i, sy + j], [sx + i, sy - j]
+      for c in cand
+        dist = Math.sqrt (c[0] - ex) ** 2 + (c[1] - ey) ** 2
+        if (Math.abs r - dist) < arcEps then validCen.push { x: c[0], y: c[1] }
     else
-        validCen.push {x: sx + i, y: sy + j}
+      validCen.push {x: sx + i, y: sy + j}
 
     # now let's calculate some angles
     thetaE = 0

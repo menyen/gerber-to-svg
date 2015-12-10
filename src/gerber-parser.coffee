@@ -190,5 +190,4 @@ class GerberParser extends Parser
 
     # return the command
     return c
-    
 module.exports = GerberParser
