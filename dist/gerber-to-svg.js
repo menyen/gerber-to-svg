@@ -28,7 +28,7 @@ DEFAULT_OPTS = {
 };
 
 module.exports = function(file, options) {
-  var a, error, height, key, oldWarn, opts, p, parser, parserOpts, plotterOpts, reader, ref, root, val, width, xml, xmlObject;
+  var a, error, error1, height, key, oldWarn, opts, p, parser, parserOpts, plotterOpts, reader, ref, root, val, width, xml, xmlObject;
   if (options == null) {
     options = {};
   }
@@ -86,8 +86,8 @@ module.exports = function(file, options) {
   }
   try {
     xmlObject = p.plot();
-  } catch (_error) {
-    error = _error;
+  } catch (error1) {
+    error = error1;
     throw new Error("Error at line " + p.reader.line + " - " + error.message);
   } finally {
     if ((oldWarn != null) && (root != null)) {
@@ -2271,7 +2271,7 @@ Plotter = (function() {
   };
 
   Plotter.prototype.drawArc = function(sx, sy, ex, ey, i, j) {
-    var arcEps, c, cand, cen, dist, k, l, large, len, len1, r, rTool, ref, ref1, ref2, sweep, t, theta, thetaE, thetaS, validCen, xMax, xMin, xn, xp, yMax, yMin, yn, yp, zeroLength;
+    var arcEps, c, cen, dist, k, l, large, len, len1, r, rTool, ref, ref1, ref2, sweep, t, theta, thetaE, thetaS, validCen, xMax, xMin, xn, xp, yMax, yMin, yn, yp, zeroLength;
     arcEps = 1.5 * coordFactor * Math.pow(10, -1 * ((ref = (ref1 = this.parser) != null ? ref1.format.places[1] : void 0) != null ? ref : 7));
     t = this.tools[this.currentTool];
     if (!this.region && !t.trace['stroke-width']) {
@@ -2284,19 +2284,23 @@ Plotter = (function() {
     sweep = this.mode === 'cw' ? 0 : 1;
     large = 0;
     validCen = [];
-    cand = [[sx + i, sy + j]];
     if (this.quad === 's') {
-      cand.push([sx - i, sy - j], [sx - i, sy + j], [sx + i, sy - j]);
-    }
-    for (k = 0, len = cand.length; k < len; k++) {
-      c = cand[k];
-      dist = Math.sqrt(Math.pow(c[0] - ex, 2) + Math.pow(c[1] - ey, 2));
-      if ((Math.abs(r - dist)) < arcEps) {
-        validCen.push({
-          x: c[0],
-          y: c[1]
-        });
+      cand.push([sx + i, sy + j], [sx - i, sy - j], [sx - i, sy + j], [sx + i, sy - j]);
+      for (k = 0, len = cand.length; k < len; k++) {
+        c = cand[k];
+        dist = Math.sqrt(Math.pow(c[0] - ex, 2) + Math.pow(c[1] - ey, 2));
+        if ((Math.abs(r - dist)) < arcEps) {
+          validCen.push({
+            x: c[0],
+            y: c[1]
+          });
+        }
       }
+    } else {
+      validCen.push({
+        x: sx + i,
+        y: sy + j
+      });
     }
     thetaE = 0;
     thetaS = 0;
@@ -2432,12 +2436,10 @@ standardTool = function(tool, p) {
       throw new RangeError(tool + " circle diameter out of range (" + p.dia + "<0)");
     }
     shape = 'circle';
-    if (p.hole == null) {
-      result.trace = {
-        'stroke-width': p.dia,
-        fill: 'none'
-      };
-    }
+    result.trace = {
+      'stroke-width': p.dia,
+      fill: 'none'
+    };
   } else if ((p.width != null) && (p.height != null)) {
     if ((p.dia != null) || (p.verticies != null) || (p.degrees != null)) {
       throw new Error("incompatible parameters for tool " + tool);

@@ -441,12 +441,6 @@ describe 'Plotter class', ->
               'A', 1, 1, 0, 0, 0, 2, 0, 'A', 1, 1, 0, 0, 0, 0, 0
             ]
 
-          it 'should warn for impossible arc and add nothing to the path', ->
-            warnings.hook()
-            p.command { set: { mode: 'cw' }, op: {do: 'int', x: 1, y: 1, j:-1 }}
-            expect( warnings.unhook() ).to.match /impossible arc/
-            expect( p.path ).to.not.contain 'A'
-
         # tool is a dia 2 circle for these tests
         describe 'adjusting the layer bbox', ->
 

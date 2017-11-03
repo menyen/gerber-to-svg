@@ -26,7 +26,7 @@ standardTool = (tool, p) ->
       throw new RangeError "#{tool} circle diameter out of range (#{p.dia}<0)"
     # get the initial shape of the pad and apply the stroke properties
     shape = 'circle'
-    unless p.hole? then result.trace = {
+    result.trace = {
       'stroke-width': p.dia
       fill: 'none'
     }
