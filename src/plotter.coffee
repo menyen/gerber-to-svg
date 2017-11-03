@@ -406,6 +406,7 @@ class Plotter
     # potential candidates
 
     if @quad is 's'
+      cand = []
       cand.push [sx + i, sy + j], [sx - i, sy - j],
          [sx - i, sy + j], [sx + i, sy - j]
       for c in cand

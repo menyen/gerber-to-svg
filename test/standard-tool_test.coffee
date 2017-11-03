@@ -95,9 +95,9 @@ describe 'standard tool function', ->
         .to.throw /points out of range/
 
   describe 'with holes', ->
-    it 'should not allow tracing if theres a hole', ->
+    it 'should allow tracing if theres a hole', ->
       result = standard tool, { dia: 10, hole: { dia: 3 } }
-      expect( result.trace ).to.be.false
+      expect( result.trace ).to.eql { 'stroke-width': 10, fill: 'none' }
     it 'should create a mask with a circle if the hole is circular', ->
       result = standard tool, { dia: 10, hole: { dia: 4 } }
       # result pad should be an array of two objects where there mask is first

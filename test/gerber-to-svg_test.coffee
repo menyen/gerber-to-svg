@@ -12,6 +12,8 @@ formatGerb = fs.readFileSync './test/gerber/format-test.gbr', 'utf-8'
 exGerb = fs.readFileSync './test/gerber/gerber-spec-example-2.gbr', 'utf-8'
 exDrill = fs.readFileSync './test/drill/example1.drl', 'utf-8'
 warnGerb = fs.readFileSync './test/gerber/repeated-op-code-test.gbr', 'utf-8'
+strokedCircleWithHole = fs.readFileSync \
+   './test/gerber/stroked-circle-with-hole.grb', 'utf-8'
 
 describe 'gerber to svg function', ->
   it 'should default to the gerber plotter', ->
@@ -72,6 +74,9 @@ describe 'gerber to svg function', ->
       expect( result2 ).to.eql result1
     it 'should throw an error if a non svg object is passed in', ->
       expect( -> gerberToSvg { thing: {} } ).to.throw /non SVG/
+
+    it 'should be able to generate an svg with bad apertures being stroked', ->
+      expect( -> gerberToSvg exGerb ).to.not.throw()
 
   describe 'logging warnings', ->
     it 'should send warnings to console.warn by default', ->
