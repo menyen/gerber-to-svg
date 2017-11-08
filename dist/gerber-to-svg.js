@@ -2271,7 +2271,7 @@ Plotter = (function() {
   };
 
   Plotter.prototype.drawArc = function(sx, sy, ex, ey, i, j) {
-    var arcEps, c, cen, dist, k, l, large, len, len1, r, rTool, ref, ref1, ref2, sweep, t, theta, thetaE, thetaS, validCen, xMax, xMin, xn, xp, yMax, yMin, yn, yp, zeroLength;
+    var arcEps, c, cand, cen, dist, k, l, large, len, len1, r, rTool, ref, ref1, ref2, sweep, t, theta, thetaE, thetaS, validCen, xMax, xMin, xn, xp, yMax, yMin, yn, yp, zeroLength;
     arcEps = 1.5 * coordFactor * Math.pow(10, -1 * ((ref = (ref1 = this.parser) != null ? ref1.format.places[1] : void 0) != null ? ref : 7));
     t = this.tools[this.currentTool];
     if (!this.region && !t.trace['stroke-width']) {
@@ -2285,6 +2285,7 @@ Plotter = (function() {
     large = 0;
     validCen = [];
     if (this.quad === 's') {
+      cand = [];
       cand.push([sx + i, sy + j], [sx - i, sy - j], [sx - i, sy + j], [sx + i, sy - j]);
       for (k = 0, len = cand.length; k < len; k++) {
         c = cand[k];
