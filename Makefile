@@ -18,3 +18,6 @@ clean:
 	git checkout dist/gerber-to-svg.js
 	git checkout dist/gerber-to-svg.min.js
 	fakeroot debian/rules clean
+
+test:
+	gulp test
