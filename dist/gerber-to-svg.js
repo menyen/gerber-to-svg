@@ -28,7 +28,7 @@ DEFAULT_OPTS = {
 };
 
 module.exports = function(file, options) {
-  var a, error, height, key, oldWarn, opts, p, parser, parserOpts, plotterOpts, reader, ref, root, val, width, xml, xmlObject;
+  var a, error, error1, height, key, oldWarn, opts, p, parser, parserOpts, plotterOpts, reader, ref, root, val, width, xml, xmlObject;
   if (options == null) {
     options = {};
   }
@@ -2271,7 +2271,7 @@ Plotter = (function() {
   };
 
   Plotter.prototype.drawArc = function(sx, sy, ex, ey, i, j) {
-    var arcEps, c, cand, cen, dist, k, l, large, len, len1, r, rTool, ref, ref1, ref2, sweep, t, theta, thetaE, thetaS, validCen, xMax, xMin, xn, xp, yMax, yMin, yn, yp, zeroLength;
+    var arcEps, c, cen, dist, k, l, large, len, len1, r, rTool, ref, ref1, ref2, sweep, t, theta, thetaE, thetaS, validCen, xMax, xMin, xn, xp, yMax, yMin, yn, yp, zeroLength;
     arcEps = 1.5 * coordFactor * Math.pow(10, -1 * ((ref = (ref1 = this.parser) != null ? ref1.format.places[1] : void 0) != null ? ref : 7));
     t = this.tools[this.currentTool];
     if (!this.region && !t.trace['stroke-width']) {
